@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionTo_Image"/>
+     <addaction name="actionTo_text"/>
+    </widget>
+    <addaction name="actionOpen"/>
+    <addaction name="actionBrowse"/>
+    <addaction name="actionSave_copy_as"/>
+    <addaction name="actionProperties"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose"/>
+    <addaction name="actionClose_all"/>
+    <addaction name="separator"/>
+    <addaction name="actionPrint"/>
+    <addaction name="separator"/>
+    <addaction name="menuExport"/>
+    <addaction name="actionOptions"/>
+    <addaction name="actionRecent_files"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menu_Toolbar">
+     <property name="title">
+      <string>&amp;Toolbar</string>
+     </property>
+     <addaction name="actionStandart"/>
+     <addaction name="actionNavigation"/>
+    </widget>
+    <widget class="QMenu" name="menu_Zoom">
+     <property name="title">
+      <string>&amp;Zoom</string>
+     </property>
+     <addaction name="actionZoom_500"/>
+     <addaction name="actionZoom_200"/>
+     <addaction name="actionZoom_100"/>
+     <addaction name="actionZoom_50"/>
+     <addaction name="actionZoom_25"/>
+     <addaction name="separator"/>
+     <addaction name="actionZoom_in"/>
+     <addaction name="actionZoom_out"/>
+    </widget>
+    <widget class="QMenu" name="menu_Rotate">
+     <property name="title">
+      <string>&amp;Rotate</string>
+     </property>
+     <widget class="QMenu" name="menuCurrent_page">
+      <property name="title">
+       <string>Current page</string>
+      </property>
+      <addaction name="actionCountwise"/>
+      <addaction name="actionCounterwise"/>
+     </widget>
+     <widget class="QMenu" name="menuAll_pages">
+      <property name="title">
+       <string>All pages</string>
+      </property>
+      <addaction name="actionClockwise"/>
+      <addaction name="actionCounterwise_2"/>
+     </widget>
+     <addaction name="menuCurrent_page"/>
+     <addaction name="menuAll_pages"/>
+     <addaction name="separator"/>
+     <addaction name="actionReset_all"/>
+    </widget>
+    <addaction name="menu_Toolbar"/>
+    <addaction name="separator"/>
+    <addaction name="actionF_ull_screen"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
+    <addaction name="separator"/>
+    <addaction name="actionFit_page"/>
+    <addaction name="actionFit_width"/>
+    <addaction name="actionFit_height"/>
+    <addaction name="actionFit_current_page"/>
+    <addaction name="separator"/>
+    <addaction name="menu_Zoom"/>
+    <addaction name="separator"/>
+    <addaction name="menu_Rotate"/>
+   </widget>
+   <widget class="QMenu" name="menuNavigate">
+    <property name="title">
+     <string>Navigate</string>
+    </property>
+    <addaction name="action_First_page"/>
+    <addaction name="actionPreviouse_page"/>
+    <addaction name="actionGo_next_page"/>
+    <addaction name="actionGo_last_page"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuNavigate"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset theme="document-open"/>
+   </property>
+   <property name="text">
+    <string>&amp;Open...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionBrowse">
+   <property name="text">
+    <string>&amp;Browse...</string>
+   </property>
+  </action>
+  <action name="actionSave_copy_as">
+   <property name="text">
+    <string>&amp;Save copy as ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionProperties">
+   <property name="text">
+    <string>P&amp;roperties</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>&amp;Close</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F4</string>
+   </property>
+  </action>
+  <action name="actionClose_all">
+   <property name="text">
+    <string>Close &amp;all</string>
+   </property>
+  </action>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset theme="document-print"/>
+   </property>
+   <property name="text">
+    <string>&amp;Print</string>
+   </property>
+  </action>
+  <action name="actionTo_Image">
+   <property name="icon">
+    <iconset theme="image-x-generic"/>
+   </property>
+   <property name="text">
+    <string>To Image</string>
+   </property>
+  </action>
+  <action name="actionTo_text">
+   <property name="icon">
+    <iconset theme="text-x-generic"/>
+   </property>
+   <property name="text">
+    <string>To text</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
+  <action name="actionRecent_files">
+   <property name="text">
+    <string>Recent files</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="actionStandart">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Standart</string>
+   </property>
+  </action>
+  <action name="actionNavigation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Navigation</string>
+   </property>
+  </action>
+  <action name="action_Contents">
+   <property name="icon">
+    <iconset theme="document"/>
+   </property>
+   <property name="text">
+    <string>&amp;Contents</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionBookmarks">
+   <property name="icon">
+    <iconset theme="user-bookmarks"/>
+   </property>
+   <property name="text">
+    <string>Bookmarks</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="action_Search">
+   <property name="icon">
+    <iconset theme="system-search"/>
+   </property>
+   <property name="text">
+    <string>&amp;Search</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="action_Tumbinails">
+   <property name="text">
+    <string>&amp;Tumbinails</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionHIghlight">
+   <property name="text">
+    <string>&amp;Highlight</string>
+   </property>
+  </action>
+  <action name="actionFile_system">
+   <property name="icon">
+    <iconset theme="user-home"/>
+   </property>
+   <property name="text">
+    <string>File system</string>
+   </property>
+  </action>
+  <action name="actionF_ull_screen">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="view-fullscreen"/>
+   </property>
+   <property name="text">
+    <string>F&amp;ull screen</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+Return</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Settings</string>
+   </property>
+  </action>
+  <action name="actionFit_page">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="zoom-fit-best"/>
+   </property>
+   <property name="text">
+    <string>Fit &amp;page</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+1</string>
+   </property>
+  </action>
+  <action name="actionFit_width">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Fit &amp;width</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+2</string>
+   </property>
+  </action>
+  <action name="actionFit_height">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Fit &amp;height</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+3</string>
+   </property>
+  </action>
+  <action name="actionFit_current_page">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="zoom-original"/>
+   </property>
+   <property name="text">
+    <string>Fit &amp;current page</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+4</string>
+   </property>
+  </action>
+  <action name="actionZoom_500">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Zoom 500%</string>
+   </property>
+  </action>
+  <action name="actionZoom_200">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Zoom 200%</string>
+   </property>
+  </action>
+  <action name="actionZoom_100">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="zoom-original"/>
+   </property>
+   <property name="text">
+    <string>Zoom 100%</string>
+   </property>
+  </action>
+  <action name="actionZoom_50">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Zoom 50%</string>
+   </property>
+  </action>
+  <action name="actionZoom_25">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Zoom 25%</string>
+   </property>
+  </action>
+  <action name="actionZoom_in">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="zoom-in"/>
+   </property>
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+=</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="zoom-out"/>
+   </property>
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionReset_all">
+   <property name="text">
+    <string>Reset all</string>
+   </property>
+  </action>
+  <action name="actionCountwise">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="object-rotate-right"/>
+   </property>
+   <property name="text">
+    <string>Countwise</string>
+   </property>
+  </action>
+  <action name="actionCounterwise">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="object-rotate-left"/>
+   </property>
+   <property name="text">
+    <string>Counterwise</string>
+   </property>
+  </action>
+  <action name="actionClockwise">
+   <property name="icon">
+    <iconset theme="object-rotate-right"/>
+   </property>
+   <property name="text">
+    <string>Clockwise</string>
+   </property>
+  </action>
+  <action name="actionCounterwise_2">
+   <property name="icon">
+    <iconset theme="object-rotate-left"/>
+   </property>
+   <property name="text">
+    <string>Counterwise</string>
+   </property>
+  </action>
+  <action name="action_First_page">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="go-home"/>
+   </property>
+   <property name="text">
+    <string>&amp;First page</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Home</string>
+   </property>
+  </action>
+  <action name="actionPreviouse_page">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="go-previous"/>
+   </property>
+   <property name="text">
+    <string>Previouse page</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+PgUp</string>
+   </property>
+  </action>
+  <action name="actionGo_next_page">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="go-next"/>
+   </property>
+   <property name="text">
+    <string>Go next page</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+PgDown</string>
+   </property>
+  </action>
+  <action name="actionGo_last_page">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset theme="go-last"/>
+   </property>
+   <property name="text">
+    <string>Go last page</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+End</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
