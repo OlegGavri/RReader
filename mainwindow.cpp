@@ -1,3 +1,6 @@
+#include <QDebug>
+#include <QFileDialog>
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -13,3 +16,21 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::on_actionOpen_triggered(bool checked)
+{
+    QString fileName = QFileDialog::getOpenFileName(
+        this,
+        tr("Open file"),
+        QDir::homePath(),
+        "PDF documents(*.pdf)");
+
+    if(!fileName.isEmpty())
+    {
+        loadDocument(fileName);
+    }
+}
+
+void MainWindow::loadDocument(const QString fileName)
+{
+
+}

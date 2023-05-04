@@ -17,5 +17,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    // Load new document
+    void loadDocument(const QString fileName);
+
+public slots:
+    void on_actionOpen_triggered(bool checked = false);
 };
 #endif // MAINWINDOW_H
