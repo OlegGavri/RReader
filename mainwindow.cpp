@@ -1,5 +1,6 @@
 #include <QDebug>
 #include <QFileDialog>
+#include <QLabel>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -9,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setCentralWidget(new QLabel("The label", this));
 }
 
 MainWindow::~MainWindow()
