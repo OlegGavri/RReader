@@ -2,6 +2,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QLabel>
+#include <QGraphicsView>
 
 #include <poppler/qt5/poppler-qt5.h>
 
@@ -13,7 +14,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    setCentralWidget(new QLabel("The label", this));
+
+    QGraphicsScene * scene = new QGraphicsScene();
+    scene->addText("This text");
+    QGraphicsView * view = new QGraphicsView(scene);
+
+    setCentralWidget(view);
 }
 
 MainWindow::~MainWindow()
@@ -53,8 +59,10 @@ void MainWindow::on_actionOpen_triggered(bool)
             return;
         }
 
-        QLabel * label = static_cast<QLabel*>(centralWidget());
-        label->setPixmap(QPixmap::fromImage(image));
+        QGraphicsView * view = static_cast<QGraphicsView*>(centralWidget());
+        QGraphicsScene * scene = view->scene();
+
+        scene->addPixmap(QPixmap::fromImage(image));
 
         delete page;
         delete document;
