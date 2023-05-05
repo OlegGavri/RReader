@@ -28,6 +28,8 @@ FORMS += \
 TRANSLATIONS += \
     RReader_ru_RU.ts
 
+LIBS += -lpoppler-qt5
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
