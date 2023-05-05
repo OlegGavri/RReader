@@ -3,11 +3,23 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QGraphicsView>
+#include <QGraphicsPixmapItem>
 
 #include <poppler/qt5/poppler-qt5.h>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+//
+// Constants
+//
+
+// Pages border width
+const int PageBorderWidth = 2;
+
+// Gap beetween pages
+constexpr int PageGap = 10;
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,10 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     QGraphicsScene * scene = new QGraphicsScene();
-    scene->addText("This text");
-    QGraphicsView * view = new QGraphicsView(scene);
-
-    setCentralWidget(view);
+    QGraphicsView * view = ui->graphicsView;
+    view->setScene(scene);
 }
 
 MainWindow::~MainWindow()
@@ -45,26 +55,45 @@ void MainWindow::on_actionOpen_triggered(bool)
             return;
         }
 
-        Poppler::Page * page = document->page(0);
-        if(page == nullptr)
-        {
-            QMessageBox::critical(this, tr("Open page error"), tr("Open page error"));
-            return;
-        }
+        document->setRenderHint(Poppler::Document::TextAntialiasing);
 
-        QImage image = page->renderToImage();
-        if(image.isNull())
-        {
-            qDebug() << "Error: image is null";
-            return;
-        }
-
-        QGraphicsView * view = static_cast<QGraphicsView*>(centralWidget());
+        QGraphicsView * view = ui->graphicsView;
         QGraphicsScene * scene = view->scene();
 
-        scene->addPixmap(QPixmap::fromImage(image));
+        int numPages = document->numPages();
 
-        delete page;
+        int y = 0;
+        for(int i = 0; i < numPages; i++)
+        {
+            Poppler::Page * page = document->page(i);
+            if(page == nullptr)
+            {
+                qDebug() << "Page get error";
+                return;
+            }
+
+            QImage image = page->renderToImage();
+            if(image.isNull())
+            {
+                qDebug() << "Error: image is null";
+                return;
+            }
+
+            int h = image.height();
+
+            QGraphicsPixmapItem * item = scene->addPixmap(QPixmap::fromImage(image));
+            item->setPos(0, y);
+            QRectF rect = item->boundingRect();
+
+            QPen borderPen = QPen();
+            borderPen.setWidth(PageBorderWidth);
+            QGraphicsItem * rectItem = scene->addRect(rect, borderPen);
+            rectItem->setPos(0, y);
+            y += h + PageGap;
+
+            delete page;
+        }
+
         delete document;
     }
 }

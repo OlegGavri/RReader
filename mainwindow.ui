@@ -13,14 +13,20 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QGraphicsView" name="graphicsView"/>
+    </item>
+   </layout>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -139,7 +145,8 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen">
    <property name="icon">
-    <iconset theme="document-open"/>
+    <iconset theme="document-open">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Open...</string>
@@ -181,7 +188,8 @@
   </action>
   <action name="actionPrint">
    <property name="icon">
-    <iconset theme="document-print"/>
+    <iconset theme="document-print">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Print</string>
@@ -189,7 +197,8 @@
   </action>
   <action name="actionTo_Image">
    <property name="icon">
-    <iconset theme="image-x-generic"/>
+    <iconset theme="image-x-generic">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>To Image</string>
@@ -197,7 +206,8 @@
   </action>
   <action name="actionTo_text">
    <property name="icon">
-    <iconset theme="text-x-generic"/>
+    <iconset theme="text-x-generic">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>To text</string>
@@ -236,7 +246,8 @@
   </action>
   <action name="action_Contents">
    <property name="icon">
-    <iconset theme="document"/>
+    <iconset theme="document">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Contents</string>
@@ -247,7 +258,8 @@
   </action>
   <action name="actionBookmarks">
    <property name="icon">
-    <iconset theme="user-bookmarks"/>
+    <iconset theme="user-bookmarks">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Bookmarks</string>
@@ -258,7 +270,8 @@
   </action>
   <action name="action_Search">
    <property name="icon">
-    <iconset theme="system-search"/>
+    <iconset theme="system-search">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;Search</string>
@@ -282,7 +295,8 @@
   </action>
   <action name="actionFile_system">
    <property name="icon">
-    <iconset theme="user-home"/>
+    <iconset theme="user-home">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>File system</string>
@@ -293,7 +307,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="view-fullscreen"/>
+    <iconset theme="view-fullscreen">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>F&amp;ull screen</string>
@@ -315,7 +330,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="zoom-fit-best"/>
+    <iconset theme="zoom-fit-best">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Fit &amp;page</string>
@@ -351,7 +367,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="zoom-original"/>
+    <iconset theme="zoom-original">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Fit &amp;current page</string>
@@ -381,7 +398,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="zoom-original"/>
+    <iconset theme="zoom-original">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Zoom 100%</string>
@@ -408,7 +426,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="zoom-in"/>
+    <iconset theme="zoom-in">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Zoom in</string>
@@ -422,7 +441,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="zoom-out"/>
+    <iconset theme="zoom-out">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Zoom out</string>
@@ -441,7 +461,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="object-rotate-right"/>
+    <iconset theme="object-rotate-right">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Countwise</string>
@@ -452,7 +473,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="object-rotate-left"/>
+    <iconset theme="object-rotate-left">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Counterwise</string>
@@ -460,7 +482,8 @@
   </action>
   <action name="actionClockwise">
    <property name="icon">
-    <iconset theme="object-rotate-right"/>
+    <iconset theme="object-rotate-right">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Clockwise</string>
@@ -468,7 +491,8 @@
   </action>
   <action name="actionCounterwise_2">
    <property name="icon">
-    <iconset theme="object-rotate-left"/>
+    <iconset theme="object-rotate-left">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Counterwise</string>
@@ -479,7 +503,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="go-home"/>
+    <iconset theme="go-home">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>&amp;First page</string>
@@ -493,7 +518,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="go-previous"/>
+    <iconset theme="go-previous">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Previouse page</string>
@@ -507,7 +533,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="go-next"/>
+    <iconset theme="go-next">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Go next page</string>
@@ -521,7 +548,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="go-last"/>
+    <iconset theme="go-last">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Go last page</string>
