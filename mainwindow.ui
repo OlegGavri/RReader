@@ -38,28 +38,29 @@
       </item>
       <item>
        <widget class="QToolButton" name="toolButtonFirstPage">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>&lt;&lt;</string>
-        </property>
-        <property name="icon">
-         <iconset theme="go-first">
-          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QToolButton" name="toolButtonPrevPage">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>&lt;</string>
-        </property>
-        <property name="icon">
-         <iconset theme="go-previous">
-          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QSpinBox" name="spinBoxPageNum">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -82,23 +83,21 @@
       </item>
       <item>
        <widget class="QToolButton" name="toolButtonNextPage">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>&gt;</string>
-        </property>
-        <property name="icon">
-         <iconset theme="go-next">
-          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QToolButton" name="toolButtonLastPage">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>&gt;&gt;</string>
-        </property>
-        <property name="icon">
-         <iconset theme="go-last">
-          <normaloff>.</normaloff>.</iconset>
         </property>
        </widget>
       </item>
@@ -220,10 +219,10 @@
     <property name="title">
      <string>Navigate</string>
     </property>
-    <addaction name="action_First_page"/>
-    <addaction name="actionPreviouse_page"/>
-    <addaction name="actionGo_next_page"/>
-    <addaction name="actionGo_last_page"/>
+    <addaction name="actionGoFirst"/>
+    <addaction name="actionGoPrev"/>
+    <addaction name="actionGoNext"/>
+    <addaction name="actionGoLast"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -597,7 +596,7 @@
     <string>Counterwise</string>
    </property>
   </action>
-  <action name="action_First_page">
+  <action name="actionGoFirst">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -612,7 +611,7 @@
     <string>Ctrl+Home</string>
    </property>
   </action>
-  <action name="actionPreviouse_page">
+  <action name="actionGoPrev">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -627,7 +626,7 @@
     <string>Ctrl+PgUp</string>
    </property>
   </action>
-  <action name="actionGo_next_page">
+  <action name="actionGoNext">
    <property name="enabled">
     <bool>false</bool>
    </property>
@@ -642,7 +641,7 @@
     <string>Ctrl+PgDown</string>
    </property>
   </action>
-  <action name="actionGo_last_page">
+  <action name="actionGoLast">
    <property name="enabled">
     <bool>false</bool>
    </property>
