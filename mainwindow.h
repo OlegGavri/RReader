@@ -21,6 +21,10 @@ private:
 
     QList<QGraphicsItem*> pageItems;
 
+    // Enable/Disable navigations elements
+    void enableNavigations();
+    void disableNavigations();
+
 public slots:
     void on_actionOpen_triggered(bool checked = false);
     void on_spinBoxPageNum_editingFinished();

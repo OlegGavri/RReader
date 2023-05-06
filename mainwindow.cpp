@@ -99,6 +99,8 @@ void MainWindow::on_actionOpen_triggered(bool)
         QSpinBox * spinBoxPageNum = ui->spinBoxPageNum;
         spinBoxPageNum->setMaximum(numPages);
 
+        enableNavigations();
+
         delete document;
     }
 }
@@ -123,4 +125,18 @@ void MainWindow::on_spinBoxPageNum_editingFinished()
     // Center position that the top of page matches top of view
     int centerPos = yItemScene + yOffsetScene / 2;
     view->centerOn(0, centerPos);
+}
+
+void MainWindow::enableNavigations()
+{
+    ui->toolButtonFirstPage->setEnabled(true);
+    ui->toolButtonPrevPage->setEnabled(true);
+    ui->toolButtonNextPage->setEnabled(true);
+    ui->toolButtonLastPage->setEnabled(true);
+    ui->spinBoxPageNum->setEnabled(true);
+
+    ui->actionGoFirst->setEnabled(true);
+    ui->actionGoNext->setEnabled(true);
+    ui->actionGoPrev->setEnabled(true);
+    ui->actionGoLast->setEnabled(true);
 }
