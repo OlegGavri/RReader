@@ -3,7 +3,6 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QGraphicsView>
-#include <QGraphicsPixmapItem>
 
 #include <poppler/qt5/poppler-qt5.h>
 
@@ -85,6 +84,8 @@ void MainWindow::on_actionOpen_triggered(bool)
             item->setPos(0, y);
             QRectF rect = item->boundingRect();
 
+            pageItems.push_back(item);
+
             QPen borderPen = QPen();
             borderPen.setWidth(PageBorderWidth);
             QGraphicsItem * rectItem = scene->addRect(rect, borderPen);
@@ -96,4 +97,26 @@ void MainWindow::on_actionOpen_triggered(bool)
 
         delete document;
     }
+}
+
+void MainWindow::on_spinBoxPageNum_editingFinished()
+{
+    // Go to page pageNum
+    const int pageNum = ui->spinBoxPageNum->value();
+
+    QGraphicsView * view = ui->graphicsView;
+    QGraphicsItem * showedItem = pageItems[pageNum];
+
+    // Show the page so that the top of page matches top of view
+    qreal yItemScene = showedItem->pos().y();           /* Page y coordinate in scene */
+    int viewHeight = view->viewport()->size().height(); /* Height of graphicsView viewport */
+
+    // Map viewHeith to scene coordinate
+    QPointF p0 = view->mapToScene(0,0);
+    QPointF p1 = view->mapToScene(0, viewHeight);
+    qreal yOffsetScene = p1.y() - p0.y();
+
+    // Center position that the top of page matches top of view
+    int centerPos = yItemScene + yOffsetScene / 2;
+    view->centerOn(0, centerPos);
 }

@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGraphicsPixmapItem>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,7 +19,10 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    QList<QGraphicsItem*> pageItems;
+
 public slots:
     void on_actionOpen_triggered(bool checked = false);
+    void on_spinBoxPageNum_editingFinished();
 };
 #endif // MAINWINDOW_H
