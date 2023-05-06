@@ -95,6 +95,10 @@ void MainWindow::on_actionOpen_triggered(bool)
             delete page;
         }
 
+        // Set number of pages in spin box
+        QSpinBox * spinBoxPageNum = ui->spinBoxPageNum;
+        spinBoxPageNum->setMaximum(numPages);
+
         delete document;
     }
 }
@@ -102,7 +106,7 @@ void MainWindow::on_actionOpen_triggered(bool)
 void MainWindow::on_spinBoxPageNum_editingFinished()
 {
     // Go to page pageNum
-    const int pageNum = ui->spinBoxPageNum->value();
+    const int pageNum = ui->spinBoxPageNum->value() - 1;
 
     QGraphicsView * view = ui->graphicsView;
     QGraphicsItem * showedItem = pageItems[pageNum];
