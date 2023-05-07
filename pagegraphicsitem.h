@@ -5,7 +5,9 @@
 
 #include <poppler/qt5/poppler-qt5.h>
 
-
+//
+// This class draw one page of PDF document in scene
+//
 class PageGraphicsItem : public QGraphicsItem
 {
 public:
