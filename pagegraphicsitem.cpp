@@ -58,3 +58,8 @@ qreal PageGraphicsItem::sceneYTop() const
 
     return y0 - rect.height()/2;
 }
+
+int PageGraphicsItem::getPageNum() const
+{
+    return pageNum;
+}

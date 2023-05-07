@@ -17,7 +17,7 @@ public:
     // Return y coordinate of top boundedRect side in scene coordinate system
     qreal sceneYTop() const;
 
-
+    int getPageNum() const;
 
 private:
     const Poppler::Document * document;

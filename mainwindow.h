@@ -59,5 +59,6 @@ public slots:
     void on_actionGoNext_triggered(bool checked = false);
     void on_actionGoLast_triggered(bool checked = false);
     void spinBoxPageNum_editingFinished();
+    void verticalScroll_valueChanged(int i);
 };
 #endif // MAINWINDOW_H

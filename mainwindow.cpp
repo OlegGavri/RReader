@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QGraphicsView>
+#include <QScrollBar>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -27,6 +28,9 @@ MainWindow::MainWindow(QWidget *parent)
     QGraphicsScene * scene = new QGraphicsScene();
     QGraphicsView * view = ui->graphicsView;
     view->setScene(scene);
+
+    QScrollBar * verticalScrollBar = view->verticalScrollBar();
+    connect(verticalScrollBar, &QAbstractSlider::valueChanged, this, &MainWindow::verticalScroll_valueChanged);
 }
 
 MainWindow::~MainWindow()
@@ -140,6 +144,32 @@ void MainWindow::spinBoxPageNum_editingFinished()
     // Go to page pageNum
     const int pageNum = spinBoxPageNum->value() - 1;
     showPage(pageNum);
+}
+
+void MainWindow::verticalScroll_valueChanged(int)
+{
+    //
+    // Update current page number
+    //
+
+    // Find item at the center of view
+    QGraphicsView * view = ui->graphicsView;
+    QSize viewSize = view->viewport()->size();
+    int viewWidth = viewSize.width();
+    int viewHeight = viewSize.height();
+
+    QGraphicsItem * item = view->itemAt(viewWidth/2, viewHeight/2);
+
+    if(item != nullptr)
+    {
+        const QSignalBlocker blocker(spinBoxPageNum);
+
+        PageGraphicsItem * pageItem = static_cast<PageGraphicsItem*>(item);
+        const int pageNum = pageItem->getPageNum();
+
+        _currentPage = pageNum;
+        spinBoxPageNum->setValue(pageNum);
+    }
 }
 
 void MainWindow::enableNavigations()
