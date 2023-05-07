@@ -39,6 +39,8 @@ private:
 
     void addPageNumSpinBox();
 
+    void updateDocumentContent();
+
     // Navigate to
     void goFirstPage();
     void goPrevPage();
@@ -58,6 +60,8 @@ public slots:
     void on_actionGoPrev_triggered(bool checked = false);
     void on_actionGoNext_triggered(bool checked = false);
     void on_actionGoLast_triggered(bool checked = false);
+    void on_actionContent_triggered(bool checked = false);
+    void on_treeViewContent_activated(const QModelIndex &index);
     void spinBoxPageNum_editingFinished();
     void verticalScroll_valueChanged(int i);
 };

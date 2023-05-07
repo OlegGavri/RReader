@@ -1,4 +1,3 @@
-#include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QLabel>
@@ -8,6 +7,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "pagegraphicsitem.h"
+#include "contentitemmodel.h"
 
 //
 // Constants
@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
     QGraphicsView * view = ui->graphicsView;
     view->setScene(scene);
 
+    // Receive document scrolling signal for tracking current page number and etc.
     QScrollBar * verticalScrollBar = view->verticalScrollBar();
     connect(verticalScrollBar, &QAbstractSlider::valueChanged, this, &MainWindow::verticalScroll_valueChanged);
 }
@@ -56,6 +57,17 @@ void MainWindow::addPageNumSpinBox()
     ui->toolBar->insertWidget(ui->actionGoNext, spinBoxPageNum);
 
     connect(spinBoxPageNum, SIGNAL(editingFinished()), this, SLOT(spinBoxPageNum_editingFinished()));
+}
+
+void MainWindow::updateDocumentContent()
+{
+    QVector<Poppler::OutlineItem> outline = document->outline();
+    ContentItemModel * contentItemModel = new ContentItemModel(outline);
+    ui->treeViewContent->setModel(contentItemModel);
+
+    // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
+    ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 }
 
 void MainWindow::on_actionOpen_triggered(bool)
@@ -102,6 +114,7 @@ void MainWindow::on_actionOpen_triggered(bool)
         scene->height();
         showPage(0);
 
+        updateDocumentContent();
         enableNavigations();
     }
 }
@@ -137,6 +150,19 @@ void MainWindow::on_actionGoNext_triggered(bool)
 void MainWindow::on_actionGoLast_triggered(bool)
 {
     goLastPage();
+}
+
+void MainWindow::on_actionContent_triggered(bool checked)
+{
+    ui->dockWidgetContent->setVisible(checked);
+}
+
+void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
+{
+    // User activate item in content. Go to selected content item.
+    ContentItemModel * model = static_cast<ContentItemModel*>(ui->treeViewContent->model());
+    int page = model->getPageFor(index);
+    showPage(page);
 }
 
 void MainWindow::spinBoxPageNum_editingFinished()

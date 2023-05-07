@@ -105,7 +105,14 @@
      <addaction name="separator"/>
      <addaction name="actionReset_all"/>
     </widget>
+    <widget class="QMenu" name="menuWindows">
+     <property name="title">
+      <string>Windows</string>
+     </property>
+     <addaction name="actionContent"/>
+    </widget>
     <addaction name="menu_Toolbar"/>
+    <addaction name="menuWindows"/>
     <addaction name="separator"/>
     <addaction name="actionF_ull_screen"/>
     <addaction name="separator"/>
@@ -166,6 +173,40 @@
    <addaction name="actionGoPrev"/>
    <addaction name="actionGoNext"/>
    <addaction name="actionGoLast"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetContent">
+   <property name="windowTitle">
+    <string>Content</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QTreeView" name="treeViewContent">
+       <attribute name="headerStretchLastSection">
+        <bool>false</bool>
+       </attribute>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -584,6 +625,22 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+End</string>
+   </property>
+  </action>
+  <action name="actionWindows">
+   <property name="text">
+    <string>Windows</string>
+   </property>
+  </action>
+  <action name="actionContent">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Content</string>
    </property>
   </action>
  </widget>
