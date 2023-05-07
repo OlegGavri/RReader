@@ -115,6 +115,26 @@ void MainWindow::on_actionClose_triggered(bool)
     document = nullptr;
 }
 
+void MainWindow::on_actionGoFirst_triggered(bool)
+{
+    goFirstPage();
+}
+
+void MainWindow::on_actionGoPrev_triggered(bool)
+{
+    goPrevPage();
+}
+
+void MainWindow::on_actionGoNext_triggered(bool)
+{
+    goNextPage();
+}
+
+void MainWindow::on_actionGoLast_triggered(bool)
+{
+    goLastPage();
+}
+
 void MainWindow::spinBoxPageNum_editingFinished()
 {
     // Go to page pageNum
@@ -161,4 +181,45 @@ void MainWindow::showPage(const int pageNum)
     // Center position that the top of page matches top of view
     int centerPos = yItemScene + yOffsetScene / 2;
     view->centerOn(0, centerPos);
+
+    _currentPage = pageNum;
+}
+
+void MainWindow::goFirstPage()
+{
+    showPage(0);
+}
+
+void MainWindow::goPrevPage()
+{
+    const int currPage = currentPage();
+    if(currPage == 0)
+        return;
+
+    showPage(currPage - 1);
+}
+
+void MainWindow::goNextPage()
+{
+    const int currPage = currentPage();
+
+    if(currPage == documentPageNumber() - 1)
+        return;
+
+    showPage(currPage + 1);
+}
+
+void MainWindow::goLastPage()
+{
+    showPage(documentPageNumber() - 1);
+}
+
+int MainWindow::currentPage() const
+{
+    return _currentPage;
+}
+
+int MainWindow::documentPageNumber() const
+{
+    return document->numPages();
 }

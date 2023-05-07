@@ -27,18 +27,37 @@ private:
     // Current opened document
     Poppler::Document * document;
 
+    // Current page
+    int _currentPage = 0;
+
     // Enable/Disable navigations elements
     void enableNavigations();
     void disableNavigations();
 
-    // Set view on given page
+    // Navigate to page
     void showPage(const int pageNum);
 
     void addPageNumSpinBox();
 
+    // Navigate to
+    void goFirstPage();
+    void goPrevPage();
+    void goNextPage();
+    void goLastPage();
+
+    // Current page in current document
+    int currentPage() const;
+
+    // Number of pages in current document
+    int documentPageNumber() const;
+
 public slots:
     void on_actionOpen_triggered(bool checked = false);
     void on_actionClose_triggered(bool checked = false);
+    void on_actionGoFirst_triggered(bool checked = false);
+    void on_actionGoPrev_triggered(bool checked = false);
+    void on_actionGoNext_triggered(bool checked = false);
+    void on_actionGoLast_triggered(bool checked = false);
     void spinBoxPageNum_editingFinished();
 };
 #endif // MAINWINDOW_H
