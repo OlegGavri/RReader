@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QGraphicsPixmapItem>
 
+#include <poppler/qt5/poppler-qt5.h>
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -19,11 +21,15 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QList<QGraphicsItem*> pageItems;
+    // Current opened document
+    Poppler::Document * document;
 
     // Enable/Disable navigations elements
     void enableNavigations();
     void disableNavigations();
+
+    // Set view on given page
+    void showPage(const int pageNum);
 
 public slots:
     void on_actionOpen_triggered(bool checked = false);
