@@ -27,6 +27,7 @@ private:
 
 public slots:
     void on_actionOpen_triggered(bool checked = false);
+    void on_actionClose_triggered(bool checked = false);
     void on_spinBoxPageNum_editingFinished();
 };
 #endif // MAINWINDOW_H

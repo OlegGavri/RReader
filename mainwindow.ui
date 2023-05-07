@@ -284,6 +284,10 @@
    </property>
   </action>
   <action name="actionClose">
+   <property name="icon">
+    <iconset resource="resoures.qrc">
+     <normaloff>:/resources/icons/close-document.png</normaloff>:/resources/icons/close-document.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Close</string>
    </property>

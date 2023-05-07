@@ -105,6 +105,16 @@ void MainWindow::on_actionOpen_triggered(bool)
     }
 }
 
+void MainWindow::on_actionClose_triggered(bool)
+{
+    QGraphicsView * view = ui->graphicsView;
+    QGraphicsScene * scene = view->scene();
+
+    scene->clear();
+
+    disableNavigations();
+}
+
 void MainWindow::on_spinBoxPageNum_editingFinished()
 {
     // Go to page pageNum
@@ -139,4 +149,18 @@ void MainWindow::enableNavigations()
     ui->actionGoNext->setEnabled(true);
     ui->actionGoPrev->setEnabled(true);
     ui->actionGoLast->setEnabled(true);
+}
+
+void MainWindow::disableNavigations()
+{
+    ui->toolButtonFirstPage->setEnabled(false);
+    ui->toolButtonPrevPage->setEnabled(false);
+    ui->toolButtonNextPage->setEnabled(false);
+    ui->toolButtonLastPage->setEnabled(false);
+    ui->spinBoxPageNum->setEnabled(false);
+
+    ui->actionGoFirst->setEnabled(false);
+    ui->actionGoNext->setEnabled(false);
+    ui->actionGoPrev->setEnabled(false);
+    ui->actionGoLast->setEnabled(false);
 }
