@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     document(nullptr)
 {
     ui->setupUi(this);
+    addPageNumSpinBox();
 
     QGraphicsScene * scene = new QGraphicsScene();
     QGraphicsView * view = ui->graphicsView;
@@ -31,6 +32,26 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::addPageNumSpinBox()
+{
+    spinBoxPageNum = new QSpinBox(this);
+
+    spinBoxPageNum->setObjectName(QString::fromUtf8("spinBoxPageNum"));
+    spinBoxPageNum->setEnabled(false);
+    QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(spinBoxPageNum->sizePolicy().hasHeightForWidth());
+    spinBoxPageNum->setSizePolicy(sizePolicy);
+    spinBoxPageNum->setMinimumSize(QSize(0, 0));
+    spinBoxPageNum->setMinimum(1);
+    spinBoxPageNum->setMaximum(10000);
+
+    ui->toolBar->insertWidget(ui->actionGoNext, spinBoxPageNum);
+
+    connect(spinBoxPageNum, SIGNAL(editingFinished()), this, SLOT(spinBoxPageNum_editingFinished()));
 }
 
 void MainWindow::on_actionOpen_triggered(bool)
@@ -70,7 +91,6 @@ void MainWindow::on_actionOpen_triggered(bool)
         }
 
         // Set number of pages in spin box
-        QSpinBox * spinBoxPageNum = ui->spinBoxPageNum;
         spinBoxPageNum->setMaximum(numPages);
 
         // Update scene height before go to page. Without this showPage not
@@ -95,21 +115,16 @@ void MainWindow::on_actionClose_triggered(bool)
     document = nullptr;
 }
 
-void MainWindow::on_spinBoxPageNum_editingFinished()
+void MainWindow::spinBoxPageNum_editingFinished()
 {
     // Go to page pageNum
-    const int pageNum = ui->spinBoxPageNum->value() - 1;
+    const int pageNum = spinBoxPageNum->value() - 1;
     showPage(pageNum);
 }
 
 void MainWindow::enableNavigations()
 {
-    ui->toolButtonFirstPage->setEnabled(true);
-    ui->toolButtonPrevPage->setEnabled(true);
-    ui->toolButtonNextPage->setEnabled(true);
-    ui->toolButtonLastPage->setEnabled(true);
-    ui->spinBoxPageNum->setEnabled(true);
-
+    spinBoxPageNum->setEnabled(true);
     ui->actionGoFirst->setEnabled(true);
     ui->actionGoNext->setEnabled(true);
     ui->actionGoPrev->setEnabled(true);
@@ -118,12 +133,7 @@ void MainWindow::enableNavigations()
 
 void MainWindow::disableNavigations()
 {
-    ui->toolButtonFirstPage->setEnabled(false);
-    ui->toolButtonPrevPage->setEnabled(false);
-    ui->toolButtonNextPage->setEnabled(false);
-    ui->toolButtonLastPage->setEnabled(false);
-    ui->spinBoxPageNum->setEnabled(false);
-
+    spinBoxPageNum->setEnabled(false);
     ui->actionGoFirst->setEnabled(false);
     ui->actionGoNext->setEnabled(false);
     ui->actionGoPrev->setEnabled(false);

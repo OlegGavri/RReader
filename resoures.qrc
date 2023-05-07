@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>resources/icons/open-folder.png</file>
         <file>resources/icons/close-document.png</file>
+        <file>resources/icons/go-home.png</file>
+        <file>resources/icons/go-last.png</file>
+        <file>resources/icons/go-next.png</file>
+        <file>resources/icons/go-prev.png</file>
     </qresource>
 </RCC>

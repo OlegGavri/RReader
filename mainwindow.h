@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsPixmapItem>
+#include <QSpinBox>
 
 #include <poppler/qt5/poppler-qt5.h>
 
@@ -21,6 +22,8 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    QSpinBox * spinBoxPageNum;
+
     // Current opened document
     Poppler::Document * document;
 
@@ -31,9 +34,11 @@ private:
     // Set view on given page
     void showPage(const int pageNum);
 
+    void addPageNumSpinBox();
+
 public slots:
     void on_actionOpen_triggered(bool checked = false);
     void on_actionClose_triggered(bool checked = false);
-    void on_spinBoxPageNum_editingFinished();
+    void spinBoxPageNum_editingFinished();
 };
 #endif // MAINWINDOW_H
