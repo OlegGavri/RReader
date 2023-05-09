@@ -1,26 +1,26 @@
+#include <stdexcept>
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QLabel>
 #include <QGraphicsView>
 #include <QScrollBar>
+#include <QException>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "pagegraphicsitem.h"
 #include "contentitemmodel.h"
 
+using namespace std;
+
 //
 // Constants
 //
 
-// Gap beetween pages
-constexpr int PageGap = 10;
-
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow),
-    document(nullptr)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     addPageNumSpinBox();
@@ -32,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Receive document scrolling signal for tracking current page number and etc.
     QScrollBar * verticalScrollBar = view->verticalScrollBar();
     connect(verticalScrollBar, &QAbstractSlider::valueChanged, this, &MainWindow::verticalScroll_valueChanged);
+
 }
 
 MainWindow::~MainWindow()
@@ -59,77 +60,102 @@ void MainWindow::addPageNumSpinBox()
     connect(spinBoxPageNum, SIGNAL(editingFinished()), this, SLOT(spinBoxPageNum_editingFinished()));
 }
 
-void MainWindow::updateDocumentContent()
-{
-    QVector<Poppler::OutlineItem> outline = document->outline();
-    ContentItemModel * contentItemModel = new ContentItemModel(outline);
-    ui->treeViewContent->setModel(contentItemModel);
-
-    // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
-    ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-}
-
 void MainWindow::on_actionOpen_triggered(bool)
 {
     QString fileName = QFileDialog::getOpenFileName(
         this,
         tr("Open file"),
-        QDir::homePath(),
+        lastOpenFileDir.isEmpty() ? QDir::homePath() : lastOpenFileDir,
         "PDF documents(*.pdf)");
 
     if(!fileName.isEmpty())
     {
-        document = Poppler::Document::load(fileName);
-        if(document == nullptr || document->isLocked())
-        {
-            QMessageBox::critical(this, tr("Open file error"), tr("Open file error"));
-            delete document;
-            return;
+        try{
+            Document * document = new Document(fileName);
+            openDocuments.push_back(document);
+
+            QGraphicsScene * scene = document->getScene();
+            QGraphicsView * view = ui->graphicsView;
+            QTreeView * treeViewContent = ui->treeViewContent;
+
+            QAbstractItemModel * contentModel = document->getContentItemModel();
+
+            view->setScene(scene);
+
+            treeViewContent->setModel(contentModel);
+            // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
+            ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+            ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+
+            // Add new tab in Tab bar
+            addTab(fileName);
+
+            showPage(0);
+            enableNavigations();
+
+            lastOpenFileDir = getFileDir(fileName);
+
+            currentDocumentIndex = openDocuments.size() - 1;
+        } catch (runtime_error & e) {
+            QMessageBox::critical(this, "Error", e.what());
         }
-
-        document->setRenderHint(Poppler::Document::TextAntialiasing);
-
-        QGraphicsView * view = ui->graphicsView;
-        QGraphicsScene * scene = view->scene();
-
-        const int numPages = document->numPages();
-
-        int y = 0;
-        for(int i = 0; i < numPages; i++)
-        {
-            PageGraphicsItem * item = new PageGraphicsItem(document, i);
-            item->setPos(0, y);
-            scene->addItem(item);
-
-            int h = item->boundingRect().height();
-            y += h + PageGap;
-        }
-
-        // Set number of pages in spin box
-        spinBoxPageNum->setMaximum(numPages);
-
-        // Update scene height before go to page. Without this showPage not
-        // working in this place.
-        scene->height();
-        showPage(0);
-
-        updateDocumentContent();
-        enableNavigations();
     }
 }
 
 void MainWindow::on_actionClose_triggered(bool)
 {
+    //
+    // Close current tab and switch to next. If closed tab is a last tab, switch to previouse
+    //
     QGraphicsView * view = ui->graphicsView;
-    QGraphicsScene * scene = view->scene();
+    QTreeView * treeViewContent = ui->treeViewContent;
+    QTabBar * tabBar = ui->tabBarDocuments;
 
-    scene->clear();
+    QSignalBlocker blocker(tabBar);
 
-    disableNavigations();
+    const int docsNum = openDocuments.size();
 
-    delete document;
-    document = nullptr;
+    if(docsNum == 0)
+    {
+        return;
+    }
+
+    int closedDocIndex = currentDocumentIndex;
+
+    Document * closedDocument = openDocuments[closedDocIndex];
+
+    if(docsNum == 1)
+    {
+        view->setScene(nullptr);
+        treeViewContent->setModel(nullptr);
+        disableNavigations();
+
+        openDocuments.clear();
+        delete closedDocument;
+        tabBar->removeTab(0);
+
+        currentDocumentIndex = 0;
+    }
+    else
+    {
+        int switchedDocIndex = (closedDocIndex == docsNum - 1) ? closedDocIndex - 1 : closedDocIndex + 1;
+        Document * switchedDocument = openDocuments[switchedDocIndex];
+
+        QGraphicsScene * scene = switchedDocument->getScene();
+        QAbstractItemModel * contentModel = switchedDocument->getContentItemModel();
+        int currentPage = switchedDocument->getCurrentPage();
+
+        view->setScene(scene);
+        treeViewContent->setModel(contentModel);
+        showPage(currentPage);
+
+        tabBar->removeTab(closedDocIndex);
+
+        openDocuments.removeAt(closedDocIndex);
+        delete closedDocument;
+
+        currentDocumentIndex = openDocuments.indexOf(switchedDocument);
+    }
 }
 
 void MainWindow::on_actionGoFirst_triggered(bool)
@@ -165,6 +191,25 @@ void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
     showPage(page);
 }
 
+void MainWindow::on_tabBarDocuments_currentChanged(int index)
+{
+    // Change current document, scene and content tree
+    currentDocumentIndex = index;
+    Document * currentDocument = openDocuments[index];
+
+    QGraphicsScene * scene = currentDocument->getScene();
+    QAbstractItemModel * contentModel = currentDocument->getContentItemModel();
+    int currentPage = currentDocument->getCurrentPage();
+
+    ui->graphicsView->setScene(scene);
+    ui->treeViewContent->setModel(contentModel);
+    // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
+    ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+
+    showPage(currentPage);
+}
+
 void MainWindow::spinBoxPageNum_editingFinished()
 {
     // Go to page pageNum
@@ -193,9 +238,23 @@ void MainWindow::verticalScroll_valueChanged(int)
         PageGraphicsItem * pageItem = static_cast<PageGraphicsItem*>(item);
         const int pageNum = pageItem->getPageNum();
 
-        _currentPage = pageNum;
+        Document * document = getCurrentDocument();
+
+        document->setCurrentPage(pageNum);
         spinBoxPageNum->setValue(pageNum);
     }
+}
+
+QString MainWindow::getFileBaseName(const QString fileName)
+{
+    QFileInfo fileInfo(fileName);
+    return fileInfo.baseName();
+}
+
+QString MainWindow::getFileDir(const QString fileName)
+{
+    QFileInfo fileInfo(fileName);
+    return fileInfo.absoluteFilePath();
 }
 
 void MainWindow::enableNavigations()
@@ -218,7 +277,8 @@ void MainWindow::disableNavigations()
 
 void MainWindow::showPage(const int pageNum)
 {
-    assert(pageNum < document->numPages());
+    Document * document = getCurrentDocument();
+    assert(pageNum < document->getPageNumber());
 
     QGraphicsView * view = ui->graphicsView;
     QGraphicsScene * scene = view->scene();
@@ -238,7 +298,7 @@ void MainWindow::showPage(const int pageNum)
     int centerPos = yItemScene + yOffsetScene / 2;
     view->centerOn(0, centerPos);
 
-    _currentPage = pageNum;
+    document->setCurrentPage(pageNum);
 }
 
 void MainWindow::goFirstPage()
@@ -272,10 +332,31 @@ void MainWindow::goLastPage()
 
 int MainWindow::currentPage() const
 {
-    return _currentPage;
+    Document * document = getCurrentDocument();
+    return document->getCurrentPage();
 }
 
 int MainWindow::documentPageNumber() const
 {
-    return document->numPages();
+    Document * document = getCurrentDocument();
+    return document->getPageNumber();
+}
+
+void MainWindow::addTab(const QString fileName)
+{
+    // If tab bar don't contain tab, create it. Set base file name in tab, and full name
+    // in tooltip.
+    QTabBar * tabBar = ui->tabBarDocuments;
+    QSignalBlocker blocker(tabBar);
+
+    int index = tabBar->addTab("");
+
+    tabBar->setTabText(index, getFileBaseName(fileName));
+    tabBar->setTabToolTip(index, fileName);
+    tabBar->setCurrentIndex(index);
+}
+
+Document * MainWindow::getCurrentDocument() const
+{
+    return openDocuments[currentDocumentIndex];
 }

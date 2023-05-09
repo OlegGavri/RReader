@@ -7,6 +7,8 @@
 
 #include <poppler/qt5/poppler-qt5.h>
 
+#include "document.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -24,11 +26,19 @@ private:
 
     QSpinBox * spinBoxPageNum;
 
-    // Current opened document
-    Poppler::Document * document;
+    // This vector contatain open documents.
+    // Order of documents is the same as the order of tabs in MainWindow
+    QVector<Document*> openDocuments;
 
-    // Current page
-    int _currentPage = 0;
+    // Index in openDocuments of current open document
+    int currentDocumentIndex = 0;
+
+    // Last open file dir
+    QString lastOpenFileDir = QString();
+
+    // Get name of file without path from full path
+    static QString getFileBaseName(const QString fileName);
+    static QString getFileDir(const QString fileName);
 
     // Enable/Disable navigations elements
     void enableNavigations();
@@ -38,8 +48,6 @@ private:
     void showPage(const int pageNum);
 
     void addPageNumSpinBox();
-
-    void updateDocumentContent();
 
     // Navigate to
     void goFirstPage();
@@ -53,6 +61,12 @@ private:
     // Number of pages in current document
     int documentPageNumber() const;
 
+    // Setup tab bar
+    void addTab(const QString fileName);
+
+    // Get current document(selected in tab bar)
+    Document * getCurrentDocument() const;
+
 public slots:
     void on_actionOpen_triggered(bool checked = false);
     void on_actionClose_triggered(bool checked = false);
@@ -62,6 +76,7 @@ public slots:
     void on_actionGoLast_triggered(bool checked = false);
     void on_actionContent_triggered(bool checked = false);
     void on_treeViewContent_activated(const QModelIndex &index);
+    void on_tabBarDocuments_currentChanged(int index);
     void spinBoxPageNum_editingFinished();
     void verticalScroll_valueChanged(int i);
 };

@@ -15,9 +15,15 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <property name="bottomMargin">
      <number>0</number>
     </property>
+    <item>
+     <widget class="QTabBar" name="tabBarDocuments" native="true"/>
+    </item>
     <item>
      <widget class="QGraphicsView" name="graphicsView"/>
     </item>
@@ -168,6 +174,7 @@
    </attribute>
    <addaction name="separator"/>
    <addaction name="actionOpen"/>
+   <addaction name="actionClose"/>
    <addaction name="separator"/>
    <addaction name="actionGoFirst"/>
    <addaction name="actionGoPrev"/>
@@ -644,6 +651,14 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QTabBar</class>
+   <extends>QWidget</extends>
+   <header>qtabbar.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resoures.qrc"/>
  </resources>

@@ -17,12 +17,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     contentitemmodel.cpp \
+    document.cpp \
     main.cpp \
     mainwindow.cpp \
     pagegraphicsitem.cpp
 
 HEADERS += \
     contentitemmodel.h \
+    document.h \
     mainwindow.h \
     pagegraphicsitem.h
 
