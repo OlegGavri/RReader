@@ -210,6 +210,24 @@ void MainWindow::on_tabBarDocuments_currentChanged(int index)
     showPage(currentPage);
 }
 
+void MainWindow::on_actionZoomIn_triggered(bool)
+{
+    Document * currentDoc = getCurrentDocument();
+    int currentPage = currentDoc->getCurrentPage();
+
+    currentDoc->zoomIn();
+    showPage(currentPage);
+}
+
+void MainWindow::on_actionZoomOut_triggered(bool)
+{
+    Document * currentDoc = getCurrentDocument();
+    int currentPage = currentDoc->getCurrentPage();
+
+    currentDoc->zoomOut();
+    showPage(currentPage);
+}
+
 void MainWindow::spinBoxPageNum_editingFinished()
 {
     // Go to page pageNum

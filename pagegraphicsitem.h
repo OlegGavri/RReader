@@ -11,7 +11,7 @@
 class PageGraphicsItem : public QGraphicsItem
 {
 public:
-    PageGraphicsItem(const Poppler::Document * document, const int pageNum);
+    PageGraphicsItem(const Poppler::Document * popplerDocument, const int pageNum, const qreal scale);
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
@@ -22,8 +22,9 @@ public:
     int getPageNum() const;
 
 private:
-    const Poppler::Document * document;
+    const Poppler::Document * popplerDocument;
     const int pageNum;
+    const qreal scale;
 };
 
 #endif // PAGEGRAPHICSITEM_H

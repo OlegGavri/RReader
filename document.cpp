@@ -7,6 +7,7 @@ using namespace std;
 
 // Gap beetween pages
 constexpr int PageGap = 10;
+constexpr qreal ScaleFactor = 1.2;
 
 Document::Document(const QString fileName)
 {
@@ -22,22 +23,8 @@ Document::Document(const QString fileName)
 
     // Create QGraphicsScene and fill it with PDF document pages
     scene = new QGraphicsScene();
-    const int numPages = document->numPages();
 
-    int y = 0;
-    for(int i = 0; i < numPages; i++)
-    {
-        PageGraphicsItem * item = new PageGraphicsItem(document, i);
-        item->setPos(0, y);
-        scene->addItem(item);
-
-        int h = item->boundingRect().height();
-        y += h + PageGap;
-    }
-
-    // Update scene height before go to page. Without this showPage not
-    // working in this place.
-    scene->height();
+    fillSceneWithPages();
 
     // Create contents
     QVector<Poppler::OutlineItem> outline = document->outline();
@@ -77,4 +64,37 @@ void Document::setCurrentPage(int page)
 QAbstractItemModel * Document::getContentItemModel() const
 {
     return contentItemModel;
+}
+
+void Document::zoomIn()
+{
+    currentScale *= ScaleFactor;
+    fillSceneWithPages();
+}
+
+void Document::zoomOut()
+{
+    currentScale /= ScaleFactor;
+    fillSceneWithPages();
+}
+
+void Document::fillSceneWithPages()
+{
+    scene->clear();
+    const int numPages = document->numPages();
+
+    int y = 0;
+    for(int i = 0; i < numPages; i++)
+    {
+        PageGraphicsItem * item = new PageGraphicsItem(document, i, currentScale);
+        item->setPos(0, y);
+        scene->addItem(item);
+
+        int h = item->boundingRect().height();
+        y += h + PageGap;
+    }
+
+    // Update scene height before go to page. Without this showPage not
+    // working in this place.
+    scene->height();
 }

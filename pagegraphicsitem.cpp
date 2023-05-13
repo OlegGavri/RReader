@@ -7,17 +7,18 @@
 // Pages border width
 const int PageBorderWidth = 2;
 
-PageGraphicsItem::PageGraphicsItem(const Poppler::Document * document, const int pageNum):
-    document(document),
-    pageNum(pageNum)
+PageGraphicsItem::PageGraphicsItem( const Poppler::Document * popplerDocument, const int pageNum, const qreal scale):
+    popplerDocument(popplerDocument),
+    pageNum(pageNum),
+    scale(scale)
 {
 
 }
 
 QRectF PageGraphicsItem::boundingRect() const
 {
-    Poppler::Page * page = document->page(pageNum);
-    QSizeF size = page->pageSizeF();
+    Poppler::Page * page = popplerDocument->page(pageNum);
+    QSizeF size = page->pageSizeF() * scale;
 
     qreal w = size.width();
     qreal h = size.height();
@@ -30,14 +31,14 @@ void PageGraphicsItem::paint(
     [[maybe_unused]] const QStyleOptionGraphicsItem * option,
     [[maybe_unused]] QWidget * widget)
 {
-    Poppler::Page * page = document->page(pageNum);
-    QSizeF size = page->pageSize();
+    Poppler::Page * page = popplerDocument->page(pageNum);
+    QSizeF size = page->pageSize() * scale;
 
     qreal w = size.width();
     qreal h = size.height();
 
     // Draw image
-    QImage image = page->renderToImage();
+    QImage image = page->renderToImage(72.0 * scale, 72.0 * scale);
     assert(!image.isNull());
 
     QPixmap pixmap = QPixmap::fromImage(image);

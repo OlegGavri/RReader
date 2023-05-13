@@ -85,8 +85,8 @@
      <addaction name="actionZoom_50"/>
      <addaction name="actionZoom_25"/>
      <addaction name="separator"/>
-     <addaction name="actionZoom_in"/>
-     <addaction name="actionZoom_out"/>
+     <addaction name="actionZoomIn"/>
+     <addaction name="actionZoomOut"/>
     </widget>
     <widget class="QMenu" name="menu_Rotate">
      <property name="title">
@@ -180,6 +180,9 @@
    <addaction name="actionGoPrev"/>
    <addaction name="actionGoNext"/>
    <addaction name="actionGoLast"/>
+   <addaction name="separator"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoomOut"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetContent">
    <property name="windowTitle">
@@ -497,13 +500,13 @@
     <string>Zoom 25%</string>
    </property>
   </action>
-  <action name="actionZoom_in">
+  <action name="actionZoomIn">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="zoom-in">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset resource="resoures.qrc">
+     <normaloff>:/resources/icons/zoom-in.png</normaloff>:/resources/icons/zoom-in.png</iconset>
    </property>
    <property name="text">
     <string>Zoom in</string>
@@ -512,13 +515,13 @@
     <string>Ctrl+=</string>
    </property>
   </action>
-  <action name="actionZoom_out">
+  <action name="actionZoomOut">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset theme="zoom-out">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset resource="resoures.qrc">
+     <normaloff>:/resources/icons/zoom-out.png</normaloff>:/resources/icons/zoom-out.png</iconset>
    </property>
    <property name="text">
     <string>Zoom out</string>

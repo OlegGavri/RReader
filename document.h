@@ -35,6 +35,10 @@ public:
     // Return nullptr, if model not present
     QAbstractItemModel * getContentItemModel() const;
 
+    // Return/set current scale factor for the document
+    void zoomIn();
+    void zoomOut();
+
 private:
 
     Poppler::Document * document = nullptr;
@@ -45,6 +49,11 @@ private:
     ContentItemModel * contentItemModel = nullptr;
 
     int currentPage = 0;
+
+    qreal currentScale = 1.0;
+
+    // Clear scene and fill it with new pages
+    void fillSceneWithPages();
 };
 
 #endif // DOCUMENT_H

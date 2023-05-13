@@ -6,5 +6,7 @@
         <file>resources/icons/go-last.png</file>
         <file>resources/icons/go-next.png</file>
         <file>resources/icons/go-prev.png</file>
+        <file>resources/icons/zoom-in.png</file>
+        <file>resources/icons/zoom-out.png</file>
     </qresource>
 </RCC>
