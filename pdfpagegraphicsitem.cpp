@@ -2,12 +2,12 @@
 
 #include <QPainter>
 
-#include "pagegraphicsitem.h"
+#include "pdfpagegraphicsitem.h"
 
 // Pages border width
 const int PageBorderWidth = 2;
 
-PageGraphicsItem::PageGraphicsItem( const Poppler::Document * popplerDocument, const int pageNum, const qreal scale):
+PdfPageGraphicsItem::PdfPageGraphicsItem( const Poppler::Document * popplerDocument, const int pageNum, const qreal scale):
     popplerDocument(popplerDocument),
     pageNum(pageNum),
     scale(scale)
@@ -15,7 +15,7 @@ PageGraphicsItem::PageGraphicsItem( const Poppler::Document * popplerDocument, c
 
 }
 
-QRectF PageGraphicsItem::boundingRect() const
+QRectF PdfPageGraphicsItem::boundingRect() const
 {
     Poppler::Page * page = popplerDocument->page(pageNum);
     QSizeF size = page->pageSizeF() * scale;
@@ -26,7 +26,7 @@ QRectF PageGraphicsItem::boundingRect() const
     return QRectF(- w/2 - PageBorderWidth/2, -h/2 - PageBorderWidth/2, w, h);
 }
 
-void PageGraphicsItem::paint(
+void PdfPageGraphicsItem::paint(
     QPainter *painter,
     [[maybe_unused]] const QStyleOptionGraphicsItem * option,
     [[maybe_unused]] QWidget * widget)
@@ -52,7 +52,7 @@ void PageGraphicsItem::paint(
     painter->drawRect(-w/2, -h/2, w, h);
 }
 
-qreal PageGraphicsItem::sceneYTop() const
+qreal PdfPageGraphicsItem::sceneYTop() const
 {
     qreal y0 = scenePos().y();
     QRectF rect = boundingRect();
@@ -60,7 +60,7 @@ qreal PageGraphicsItem::sceneYTop() const
     return y0 - rect.height()/2;
 }
 
-int PageGraphicsItem::getPageNum() const
+int PdfPageGraphicsItem::getPageNum() const
 {
     return pageNum;
 }

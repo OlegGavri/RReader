@@ -71,7 +71,7 @@ void MainWindow::on_actionOpen_triggered(bool)
     if(!fileName.isEmpty())
     {
         try{
-            Document * document = new Document(fileName);
+            Document * document = Document::createDocument(fileName);
             openDocuments.push_back(document);
 
             QGraphicsScene * scene = document->getScene();

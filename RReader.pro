@@ -20,13 +20,17 @@ SOURCES += \
     document.cpp \
     main.cpp \
     mainwindow.cpp \
-    pagegraphicsitem.cpp
+    pdfdocument.cpp \
+    pdfpagegraphicsitem.cpp
 
 HEADERS += \
     contentitemmodel.h \
     document.h \
     mainwindow.h \
-    pagegraphicsitem.h
+    pagegraphicsitem.h \
+    pagegraphicsitem.h \
+    pdfdocument.h \
+    pdfpagegraphicsitem.h
 
 FORMS += \
     mainwindow.ui

@@ -7,7 +7,7 @@
 
 #include <poppler/qt5/poppler-qt5.h>
 
-#include "document.h"
+#include "pdfdocument.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

@@ -5,55 +5,33 @@
 #include <QGraphicsScene>
 #include <QAbstractItemModel>
 
-#include <poppler/qt5/poppler-qt5.h>
-
-#include "contentitemmodel.h"
-
-//
-// Information about open document and QGraphicsScene, filled with pages QGraphicsItem
-//
 class Document
 {
 public:
-    // Open document
-    Document(const QString fileName);
-    ~Document();
+    virtual ~Document() = 0;
 
     // Graphic scene with pages
-    QGraphicsScene * getScene() const;
+    virtual QGraphicsScene * getScene() const = 0;
 
     // Get page number of document
-    int getPageNumber() const;
+    virtual int getPageNumber() const = 0;
 
     // Get current page
-    int getCurrentPage() const;
+    virtual int getCurrentPage() const = 0;
 
-    void setCurrentPage(int page);
+    virtual void setCurrentPage(int page) = 0;
 
     // Return content item model for this document
     // It cat set this model for QTreeView
     // Return nullptr, if model not present
-    QAbstractItemModel * getContentItemModel() const;
+    virtual QAbstractItemModel * getContentItemModel() const = 0;
 
     // Return/set current scale factor for the document
-    void zoomIn();
-    void zoomOut();
+    virtual void zoomIn() = 0;
+    virtual void zoomOut() = 0;
 
-private:
-
-    Poppler::Document * document = nullptr;
-
-    QGraphicsScene * scene = nullptr;
-
-    // QAbstractItemModel for QTreeView. Contain contents
-    ContentItemModel * contentItemModel = nullptr;
-
-    int currentPage = 0;
-
-    qreal currentScale = 1.0;
-
-    // Clear scene and fill it with new pages
-    void fillSceneWithPages();
+    // Create new Document class for fileName file
+    static Document * createDocument(const QString fileName);
 };
 
 #endif // DOCUMENT_H
