@@ -28,11 +28,11 @@ MainWindow::MainWindow(QWidget *parent)
     QGraphicsScene * scene = new QGraphicsScene();
     QGraphicsView * view = ui->graphicsView;
     view->setScene(scene);
+    view->setDragMode(QGraphicsView::ScrollHandDrag);
 
     // Receive document scrolling signal for tracking current page number and etc.
     QScrollBar * verticalScrollBar = view->verticalScrollBar();
     connect(verticalScrollBar, &QAbstractSlider::valueChanged, this, &MainWindow::verticalScroll_valueChanged);
-
 }
 
 MainWindow::~MainWindow()
