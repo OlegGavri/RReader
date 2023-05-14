@@ -5,7 +5,8 @@
 #include <QLabel>
 #include <QGraphicsView>
 #include <QScrollBar>
-#include <QException>
+#include <QSettings>
+#include <QtDebug>
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -33,6 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
     // Receive document scrolling signal for tracking current page number and etc.
     QScrollBar * verticalScrollBar = view->verticalScrollBar();
     connect(verticalScrollBar, &QAbstractSlider::valueChanged, this, &MainWindow::verticalScroll_valueChanged);
+
+    restoreSettings();
 }
 
 MainWindow::~MainWindow()
@@ -71,31 +74,7 @@ void MainWindow::on_actionOpen_triggered(bool)
     if(!fileName.isEmpty())
     {
         try{
-            Document * document = Document::createDocument(fileName);
-            openDocuments.push_back(document);
-
-            QGraphicsScene * scene = document->getScene();
-            QGraphicsView * view = ui->graphicsView;
-            QTreeView * treeViewContent = ui->treeViewContent;
-
-            QAbstractItemModel * contentModel = document->getContentItemModel();
-
-            view->setScene(scene);
-
-            treeViewContent->setModel(contentModel);
-            // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
-            ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-            ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-
-            // Add new tab in Tab bar
-            addTab(fileName);
-
-            showPage(0);
-            enableNavigations();
-
-            lastOpenFileDir = getFileDir(fileName);
-
-            currentDocumentIndex = openDocuments.size() - 1;
+            openDocument(fileName);
         } catch (runtime_error & e) {
             QMessageBox::critical(this, "Error", e.what());
         }
@@ -377,4 +356,82 @@ void MainWindow::addTab(const QString fileName)
 Document * MainWindow::getCurrentDocument() const
 {
     return openDocuments[currentDocumentIndex];
+}
+
+void MainWindow::openDocument(const QString fileName)
+{
+    Document * document = Document::createDocument(fileName);
+    openDocuments.push_back(document);
+
+    QGraphicsScene * scene = document->getScene();
+    QGraphicsView * view = ui->graphicsView;
+    QTreeView * treeViewContent = ui->treeViewContent;
+
+    QAbstractItemModel * contentModel = document->getContentItemModel();
+
+    view->setScene(scene);
+
+    treeViewContent->setModel(contentModel);
+    // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
+    ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+
+    // Add new tab in Tab bar
+    addTab(fileName);
+
+    showPage(0);
+    enableNavigations();
+
+    lastOpenFileDir = getFileDir(fileName);
+
+    currentDocumentIndex = openDocuments.size() - 1;
+}
+
+void MainWindow::saveSettings()
+{
+    QSettings settings;
+
+    // Save list of open files
+    QList<QVariant> fileNameList;
+    Document * doc;
+    foreach(doc, openDocuments)
+    {
+        QString fileName = doc->getFileName();
+        fileNameList.push_back(QVariant(fileName));
+    }
+
+    settings.setValue("openFilesList", QVariant(fileNameList));
+
+    // Save window state
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+}
+
+void MainWindow::restoreSettings()
+{
+    QSettings settings;
+
+    // Restore window state
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("windowState").toByteArray());
+
+    // Open files was opened in previouse session
+    QList<QVariant> fileNameList = settings.value("openFilesList").toList();
+    QVariant elem;
+    foreach(elem, fileNameList)
+    {
+        QString fileName = elem.toString();
+
+        try {
+            openDocument(fileName);
+        } catch(runtime_error & e) {
+            qWarning() << "Error when open document " << fileName;
+        }
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent * event)
+{
+    saveSettings();
+    QMainWindow::closeEvent(event);
 }

@@ -67,6 +67,15 @@ private:
     // Get current document(selected in tab bar)
     Document * getCurrentDocument() const;
 
+    // Open new document
+    void openDocument(const QString fileName);
+
+    void saveSettings();
+    void restoreSettings();
+
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 public slots:
     void on_actionOpen_triggered(bool checked = false);
     void on_actionClose_triggered(bool checked = false);

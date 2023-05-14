@@ -9,7 +9,8 @@ using namespace std;
 constexpr int PageGap = 10;
 constexpr qreal ScaleFactor = 1.2;
 
-PdfDocument::PdfDocument(const QString fileName)
+PdfDocument::PdfDocument(const QString fileName):
+    fileName(fileName)
 {
     document = Poppler::Document::load(fileName);
     if(document == nullptr || document->isLocked())
@@ -39,6 +40,11 @@ PdfDocument::~PdfDocument()
     delete scene;
     delete document;
     delete contentItemModel;
+}
+
+QString PdfDocument::getFileName() const
+{
+    return fileName;
 }
 
 QGraphicsScene * PdfDocument::getScene() const

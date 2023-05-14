@@ -13,6 +13,9 @@ public:
     // Graphic scene with pages
     virtual QGraphicsScene * getScene() const = 0;
 
+    // Full file path of this document file
+    virtual QString getFileName() const = 0;
+
     // Get page number of document
     virtual int getPageNumber() const = 0;
 

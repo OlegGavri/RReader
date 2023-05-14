@@ -16,6 +16,8 @@ public:
     PdfDocument(const QString fileName);
     ~PdfDocument();
 
+    QString getFileName() const override;
+
     // Graphic scene with pages
     QGraphicsScene * getScene() const override;
 
@@ -37,6 +39,7 @@ public:
     void zoomOut() override;
 
 private:
+    const QString fileName;
 
     Poppler::Document * document = nullptr;
 
