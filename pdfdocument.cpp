@@ -30,7 +30,7 @@ PdfDocument::PdfDocument(const QString fileName):
     // Create contents
     QVector<Poppler::OutlineItem> outline = document->outline();
     if(!outline.empty())
-        contentItemModel = new ContentItemModel(outline);
+        contentItemModel = new PdfContentItemModel(outline);
     else
         contentItemModel = nullptr;
 }
@@ -89,6 +89,7 @@ void PdfDocument::fillSceneWithPages()
     scene->clear();
     const int numPages = document->numPages();
 
+    //TODO: fix pages postion as in DJVU
     int y = 0;
     for(int i = 0; i < numPages; i++)
     {

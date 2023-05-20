@@ -11,7 +11,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "pagegraphicsitem.h"
-#include "contentitemmodel.h"
+#include "pdfcontentitemmodel.h"
 
 using namespace std;
 
@@ -69,7 +69,7 @@ void MainWindow::on_actionOpen_triggered(bool)
         this,
         tr("Open file"),
         lastOpenFileDir.isEmpty() ? QDir::homePath() : lastOpenFileDir,
-        "PDF documents(*.pdf)");
+        "PDF documents(*.pdf *.djvu)");
 
     if(!fileName.isEmpty())
     {
@@ -165,7 +165,7 @@ void MainWindow::on_actionContent_triggered(bool checked)
 void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
 {
     // User activate item in content. Go to selected content item.
-    ContentItemModel * model = static_cast<ContentItemModel*>(ui->treeViewContent->model());
+    PdfContentItemModel * model = static_cast<PdfContentItemModel*>(ui->treeViewContent->model());
     int page = model->getPageFor(index);
     showPage(page);
 }
@@ -371,10 +371,15 @@ void MainWindow::openDocument(const QString fileName)
 
     view->setScene(scene);
 
-    treeViewContent->setModel(contentModel);
-    // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
-    ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    if(contentModel)
+    {
+        treeViewContent->setModel(contentModel);
+        // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
+        treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+        treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    }
+    else
+        treeViewContent->setModel(nullptr);
 
     // Add new tab in Tab bar
     addTab(fileName);

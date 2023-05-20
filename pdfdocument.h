@@ -4,7 +4,7 @@
 #include <poppler/qt5/poppler-qt5.h>
 
 #include "document.h"
-#include "contentitemmodel.h"
+#include "pdfcontentitemmodel.h"
 
 //
 // Information about open document and QGraphicsScene, filled with pages QGraphicsItem
@@ -46,7 +46,7 @@ private:
     QGraphicsScene * scene = nullptr;
 
     // QAbstractItemModel for QTreeView. Contain contents
-    ContentItemModel * contentItemModel = nullptr;
+    PdfContentItemModel * contentItemModel = nullptr;
 
     int currentPage = 0;
 

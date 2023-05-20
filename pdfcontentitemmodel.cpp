@@ -1,16 +1,16 @@
 #include <cassert>
 
-#include "contentitemmodel.h"
+#include "pdfcontentitemmodel.h"
 
 
 
-ContentItemModel::ContentItemModel(QVector<Poppler::OutlineItem> outlines, QObject * parent):
+PdfContentItemModel::PdfContentItemModel(QVector<Poppler::OutlineItem> outlines, QObject * parent):
     QAbstractItemModel(parent),
     tree(outlines)
 {
 }
 
-QModelIndex ContentItemModel::index(
+QModelIndex PdfContentItemModel::index(
     int row,
     int column,
     const QModelIndex &parent) const
@@ -30,7 +30,7 @@ QModelIndex ContentItemModel::index(
     return createIndex(row, column, elem);
 }
 
-QVariant ContentItemModel::data(const QModelIndex &index, int role) const
+QVariant PdfContentItemModel::data(const QModelIndex &index, int role) const
 {
     if(!index.isValid())
         return QVariant();
@@ -49,7 +49,7 @@ QVariant ContentItemModel::data(const QModelIndex &index, int role) const
     else return QVariant();
 }
 
-QModelIndex ContentItemModel::parent(const QModelIndex &index) const
+QModelIndex PdfContentItemModel::parent(const QModelIndex &index) const
 {
     if(!index.isValid())
         return QModelIndex();
@@ -63,7 +63,7 @@ QModelIndex ContentItemModel::parent(const QModelIndex &index) const
         return createIndex(parentElem->getParentIndex(), 0, parentElem);
 }
 
-int ContentItemModel::rowCount(const QModelIndex &parent) const
+int PdfContentItemModel::rowCount(const QModelIndex &parent) const
 {
     if(parent.column() > 0)
         return 0;
@@ -77,12 +77,12 @@ int ContentItemModel::rowCount(const QModelIndex &parent) const
     return elem->getChildNum();
 }
 
-int ContentItemModel::columnCount(const QModelIndex &) const
+int PdfContentItemModel::columnCount(const QModelIndex &) const
 {
     return 2;
 }
 
-QVariant ContentItemModel::headerData(
+QVariant PdfContentItemModel::headerData(
     int section,
     Qt::Orientation orientation,
     int role) const
@@ -98,7 +98,7 @@ QVariant ContentItemModel::headerData(
     return QVariant();
 }
 
-int ContentItemModel::getPageFor(const QModelIndex &index) const
+int PdfContentItemModel::getPageFor(const QModelIndex &index) const
 {
     assert(index.isValid());
     TreeElement * elem = static_cast<TreeElement*>(index.internalPointer());

@@ -1,5 +1,5 @@
-#ifndef CONTENTITEMMODEL_H
-#define CONTENTITEMMODEL_H
+#ifndef PDFCONTENTITEMMODEL_H
+#define PDFCONTENTITEMMODEL_H
 
 #include <QAbstractItemModel>
 
@@ -124,10 +124,10 @@ private:
 //
 // Items model for QTreeView show contents of document
 //
-class ContentItemModel : public QAbstractItemModel
+class PdfContentItemModel : public QAbstractItemModel
 {
 public:
-    explicit ContentItemModel(QVector<Poppler::OutlineItem>, QObject * parent = nullptr);
+    explicit PdfContentItemModel(QVector<Poppler::OutlineItem>, QObject * parent = nullptr);
 
     // Overrided methods
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
@@ -144,4 +144,4 @@ private:
     const Tree tree;
 };
 
-#endif // CONTENTITEMMODEL_H
+#endif // PDFCONTENTITEMMODEL_H

@@ -16,19 +16,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    contentitemmodel.cpp \
+    djvudocument.cpp \
+    djvupagegraphicsitem.cpp \
     document.cpp \
     main.cpp \
     mainwindow.cpp \
+    pdfcontentitemmodel.cpp \
     pdfdocument.cpp \
     pdfpagegraphicsitem.cpp
 
 HEADERS += \
-    contentitemmodel.h \
+    djvudocument.h \
+    djvupagegraphicsitem.h \
     document.h \
     mainwindow.h \
     pagegraphicsitem.h \
     pagegraphicsitem.h \
+    pdfcontentitemmodel.h \
     pdfdocument.h \
     pdfpagegraphicsitem.h
 
@@ -38,7 +42,7 @@ FORMS += \
 TRANSLATIONS += \
     RReader_ru_RU.ts
 
-LIBS += -lpoppler-qt5
+LIBS += -lpoppler-qt5 -ldjvulibre
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
