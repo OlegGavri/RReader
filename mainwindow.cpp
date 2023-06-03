@@ -11,7 +11,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "pagegraphicsitem.h"
-#include "pdfcontentitemmodel.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -123,6 +123,8 @@ void MainWindow::on_actionClose_triggered(bool)
     int closedDocIndex = currentDocumentIndex;
 
     Document * closedDocument = openDocuments[closedDocIndex];
+
+    saveDocumentSettings(closedDocument);
 
     if(docsNum == 1)
     {
@@ -440,6 +442,14 @@ void MainWindow::openDocument(const QString fileName)
     // Add new tab in Tab bar
     addTab(fileName);
 
+    // Restore document settings
+    DocumentSettings documentSettings = Settings::GetDocumentSettings(fileName);
+
+    if(documentSettings.scale.has_value())
+    {
+        document->setScale(documentSettings.scale.value());
+    }
+
     showPage(0);
     enableNavigations();
 
@@ -457,6 +467,7 @@ void MainWindow::openDocument(const QString fileName)
 
 void MainWindow::saveSettings()
 {
+    //TODO: move to Settings
     QSettings settings;
 
     // Save list of open files
@@ -473,10 +484,17 @@ void MainWindow::saveSettings()
     // Save window state
     settings.setValue("geometry", saveGeometry());
     settings.setValue("windowState", saveState());
+
+    // Save settings for each open document
+    foreach(doc, openDocuments)
+    {
+        saveDocumentSettings(doc);
+    }
 }
 
 void MainWindow::restoreSettings()
 {
+    //TODO: move to Settings
     QSettings settings;
 
     // Restore window state
@@ -496,6 +514,18 @@ void MainWindow::restoreSettings()
             qWarning() << "Error when open document " << fileName;
         }
     }
+}
+
+void MainWindow::saveDocumentSettings(const Document * document)
+{
+    QString documentName = document->getFileName();
+    qreal scale = document->getScale();
+
+    DocumentSettings documentSettings;
+
+    documentSettings.scale = scale;
+
+    Settings::SetDocumentSettings(documentName, documentSettings);
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)

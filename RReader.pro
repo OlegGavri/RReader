@@ -24,7 +24,8 @@ SOURCES += \
     mainwindow.cpp \
     pdfcontentitemmodel.cpp \
     pdfdocument.cpp \
-    pdfpagegraphicsitem.cpp
+    pdfpagegraphicsitem.cpp \
+    settings.cpp
 
 HEADERS += \
     contentsitemmodel.h \
@@ -38,7 +39,8 @@ HEADERS += \
     pagegraphicsitem.h \
     pdfcontentitemmodel.h \
     pdfdocument.h \
-    pdfpagegraphicsitem.h
+    pdfpagegraphicsitem.h \
+    settings.h
 
 FORMS += \
     mainwindow.ui

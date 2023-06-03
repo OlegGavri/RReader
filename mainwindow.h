@@ -74,6 +74,7 @@ private:
 
     void saveSettings();
     void restoreSettings();
+    void saveDocumentSettings(const Document *);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
