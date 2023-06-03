@@ -81,12 +81,24 @@ DjvuDocument::DjvuDocument(const QString fileName):
     scene = new QGraphicsScene();
 
     fillSceneWithPages();
+
+    // Get contents item model
+    miniexp_t expOutline;
+    while ((expOutline = ddjvu_document_get_outline(document)) == miniexp_dummy)
+        handle_ddjvu_messages(context, TRUE);
+
+    if(expOutline != miniexp_nil)
+    {
+        contentsItemModel = new DjvuContentItemModel(expOutline);
+    }
 }
 
 DjvuDocument::~DjvuDocument()
 {
     ddjvu_document_release(document);
     ddjvu_context_release(context);
+    delete scene;
+    delete contentsItemModel;
 }
 
 QGraphicsScene * DjvuDocument::getScene() const
@@ -116,8 +128,7 @@ void DjvuDocument::setCurrentPage(int page)
 
 ContentsItemModel * DjvuDocument::getContentItemModel() const
 {
-    //TODO: add content model
-    return nullptr;
+    return contentsItemModel;
 }
 
 void DjvuDocument::zoomIn()

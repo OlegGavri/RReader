@@ -4,6 +4,7 @@
 #include <libdjvu/ddjvuapi.h>
 
 #include "document.h"
+#include "djvucontentitemmodel.h"
 
 //
 // DJVU document
@@ -43,6 +44,8 @@ private:
 
     // Number of pages in document
     int totalPageNumber = 0;
+
+    DjvuContentItemModel * contentsItemModel = nullptr;
 
     // Clear scene and fill it with new pages
     void fillSceneWithPages();
