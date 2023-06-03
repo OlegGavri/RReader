@@ -5,6 +5,7 @@
 
 #include "document.h"
 #include "pdfcontentitemmodel.h"
+#include "contentsitemmodel.h"
 
 //
 // Information about open document and QGraphicsScene, filled with pages QGraphicsItem
@@ -32,7 +33,7 @@ public:
     // Return content item model for this document
     // It cat set this model for QTreeView
     // Return nullptr, if model not present
-    QAbstractItemModel * getContentItemModel() const override;
+    ContentsItemModel * getContentItemModel() const override;
 
     // Return/set current scale factor for the document
     void zoomIn() override;

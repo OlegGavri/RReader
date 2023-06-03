@@ -1,7 +1,8 @@
 #ifndef PDFCONTENTITEMMODEL_H
 #define PDFCONTENTITEMMODEL_H
 
-#include <QAbstractItemModel>
+//#include <QAbstractItemModel>
+#include "contentsitemmodel.h"
 
 #include <poppler/qt5/poppler-qt5.h>
 
@@ -124,7 +125,7 @@ private:
 //
 // Items model for QTreeView show contents of document
 //
-class PdfContentItemModel : public QAbstractItemModel
+class PdfContentItemModel : public ContentsItemModel
 {
 public:
     explicit PdfContentItemModel(QVector<Poppler::OutlineItem>, QObject * parent = nullptr);
@@ -138,7 +139,7 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
     // Return page number associated with this content item
-    int getPageFor(const QModelIndex &index) const;
+    std::optional<int> getPageFor(const QModelIndex &index) const override;
 
 private:
     const Tree tree;

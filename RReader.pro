@@ -26,6 +26,7 @@ SOURCES += \
     pdfpagegraphicsitem.cpp
 
 HEADERS += \
+    contentsitemmodel.h \
     djvudocument.h \
     djvupagegraphicsitem.h \
     document.h \

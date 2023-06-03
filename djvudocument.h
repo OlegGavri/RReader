@@ -20,7 +20,7 @@ public:
     int getPageNumber() const override;
     int getCurrentPage() const override;
     void setCurrentPage(int page) override;
-    QAbstractItemModel * getContentItemModel() const override;
+    ContentsItemModel * getContentItemModel() const override;
     void zoomIn() override;
     void zoomOut() override;
 

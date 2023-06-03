@@ -5,6 +5,8 @@
 #include <QGraphicsScene>
 #include <QAbstractItemModel>
 
+#include "contentsitemmodel.h"
+
 class Document
 {
 public:
@@ -27,7 +29,7 @@ public:
     // Return content item model for this document
     // It cat set this model for QTreeView
     // Return nullptr, if model not present
-    virtual QAbstractItemModel * getContentItemModel() const = 0;
+    virtual ContentsItemModel * getContentItemModel() const = 0;
 
     // Return/set current scale factor for the document
     virtual void zoomIn() = 0;

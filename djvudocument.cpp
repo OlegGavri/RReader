@@ -114,7 +114,7 @@ void DjvuDocument::setCurrentPage(int page)
     currentPage = page;
 }
 
-QAbstractItemModel * DjvuDocument::getContentItemModel() const
+ContentsItemModel * DjvuDocument::getContentItemModel() const
 {
     //TODO: add content model
     return nullptr;

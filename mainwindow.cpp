@@ -165,9 +165,11 @@ void MainWindow::on_actionContent_triggered(bool checked)
 void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
 {
     // User activate item in content. Go to selected content item.
-    PdfContentItemModel * model = static_cast<PdfContentItemModel*>(ui->treeViewContent->model());
-    int page = model->getPageFor(index);
-    showPage(page);
+    ContentsItemModel * model = static_cast<ContentsItemModel*>(ui->treeViewContent->model());
+    optional<int> page = model->getPageFor(index);
+
+    if(page.has_value())
+        showPage(page.value());
 }
 
 void MainWindow::on_tabBarDocuments_currentChanged(int index)
@@ -177,7 +179,7 @@ void MainWindow::on_tabBarDocuments_currentChanged(int index)
     Document * currentDocument = openDocuments[index];
 
     QGraphicsScene * scene = currentDocument->getScene();
-    QAbstractItemModel * contentModel = currentDocument->getContentItemModel();
+    ContentsItemModel * contentModel = currentDocument->getContentItemModel();
     int currentPage = currentDocument->getCurrentPage();
 
     ui->graphicsView->setScene(scene);

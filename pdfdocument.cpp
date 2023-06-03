@@ -67,9 +67,9 @@ void PdfDocument::setCurrentPage(int page)
     currentPage = page;
 }
 
-QAbstractItemModel * PdfDocument::getContentItemModel() const
+ContentsItemModel * PdfDocument::getContentItemModel() const
 {
-    return contentItemModel;
+    return static_cast<ContentsItemModel*>(contentItemModel);
 }
 
 void PdfDocument::zoomIn()

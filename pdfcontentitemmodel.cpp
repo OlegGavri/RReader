@@ -2,10 +2,11 @@
 
 #include "pdfcontentitemmodel.h"
 
+using namespace std;
 
 
 PdfContentItemModel::PdfContentItemModel(QVector<Poppler::OutlineItem> outlines, QObject * parent):
-    QAbstractItemModel(parent),
+    ContentsItemModel(parent),
     tree(outlines)
 {
 }
@@ -79,6 +80,8 @@ int PdfContentItemModel::rowCount(const QModelIndex &parent) const
 
 int PdfContentItemModel::columnCount(const QModelIndex &) const
 {
+    // Contents in this application have two column:
+    // Name and page
     return 2;
 }
 
@@ -98,7 +101,7 @@ QVariant PdfContentItemModel::headerData(
     return QVariant();
 }
 
-int PdfContentItemModel::getPageFor(const QModelIndex &index) const
+optional<int> PdfContentItemModel::getPageFor(const QModelIndex &index) const
 {
     assert(index.isValid());
     TreeElement * elem = static_cast<TreeElement*>(index.internalPointer());
