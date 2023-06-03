@@ -84,6 +84,17 @@ void PdfDocument::zoomOut()
     fillSceneWithPages();
 }
 
+qreal PdfDocument::getScale() const
+{
+    return currentScale;
+}
+
+void PdfDocument::setScale(qreal scale)
+{
+    currentScale = scale;
+    fillSceneWithPages();
+}
+
 void PdfDocument::fillSceneWithPages()
 {
     scene->clear();

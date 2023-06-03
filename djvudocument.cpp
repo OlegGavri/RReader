@@ -148,6 +148,17 @@ void DjvuDocument::zoomOut()
     fillSceneWithPages();
 }
 
+qreal DjvuDocument::getScale() const
+{
+    return currentScale;
+}
+
+void DjvuDocument::setScale(qreal scale)
+{
+    currentScale = scale;
+    fillSceneWithPages();
+}
+
 void DjvuDocument::fillSceneWithPages()
 {
     //

@@ -38,6 +38,8 @@ public:
     // Return/set current scale factor for the document
     void zoomIn() override;
     void zoomOut() override;
+    qreal getScale() const override;
+    void setScale(qreal) override;
 
 private:
     const QString fileName;

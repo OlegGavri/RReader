@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     addPageNumSpinBox();
+    addZoomSpinBox();
 
     QGraphicsScene * scene = new QGraphicsScene();
     QGraphicsView * view = ui->graphicsView;
@@ -41,6 +42,26 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::addZoomSpinBox()
+{
+    spinBoxZoom = new QSpinBox(this);
+
+    spinBoxZoom->setObjectName("spinBoxZoom");
+    spinBoxZoom->setEnabled(false);
+    QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(spinBoxZoom->sizePolicy().hasHeightForWidth());
+    spinBoxZoom->setSizePolicy(sizePolicy);
+    spinBoxZoom->setMinimumSize(QSize(0, 0));
+    spinBoxZoom->setMinimum(1);
+    spinBoxZoom->setMaximum(1000);
+
+    ui->toolBar->insertWidget(ui->actionZoomOut, spinBoxZoom);
+
+    connect(spinBoxZoom, SIGNAL(editingFinished()), this, SLOT(spinBoxZoom_editingFinished()));
 }
 
 void MainWindow::addPageNumSpinBox()
@@ -174,6 +195,9 @@ void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
 
 void MainWindow::on_tabBarDocuments_currentChanged(int index)
 {
+    QSignalBlocker bl0(spinBoxZoom);
+    QSignalBlocker bl1(spinBoxPageNum);
+
     // Change current document, scene and content tree
     currentDocumentIndex = index;
     Document * currentDocument = openDocuments[index];
@@ -188,6 +212,10 @@ void MainWindow::on_tabBarDocuments_currentChanged(int index)
     ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
 
+    // Set zoom
+    qreal scale = currentDocument->getScale();
+    spinBoxZoom->setValue(scale * 100);
+
     showPage(currentPage);
 }
 
@@ -198,6 +226,13 @@ void MainWindow::on_actionZoomIn_triggered(bool)
 
     currentDoc->zoomIn();
     showPage(currentPage);
+
+    // Update zoom spin box
+    qreal scale = currentDoc->getScale();
+    int zoom = scale * 100;
+
+    QSignalBlocker bl(spinBoxZoom);
+    spinBoxZoom->setValue(zoom);
 }
 
 void MainWindow::on_actionZoomOut_triggered(bool)
@@ -207,6 +242,13 @@ void MainWindow::on_actionZoomOut_triggered(bool)
 
     currentDoc->zoomOut();
     showPage(currentPage);
+
+    // Update zoom spin box
+    qreal scale = currentDoc->getScale();
+    int zoom = scale * 100;
+
+    QSignalBlocker bl(spinBoxZoom);
+    spinBoxZoom->setValue(zoom);
 }
 
 void MainWindow::spinBoxPageNum_editingFinished()
@@ -214,6 +256,16 @@ void MainWindow::spinBoxPageNum_editingFinished()
     // Go to page pageNum
     const int pageNum = spinBoxPageNum->value() - 1;
     showPage(pageNum);
+}
+
+void MainWindow::spinBoxZoom_editingFinished()
+{
+    // Set zoom for current document
+    const int zoom = spinBoxZoom->value();
+    const qreal scale = (qreal)(zoom) / 100.0;
+
+    Document * document = getCurrentDocument();
+    document->setScale(scale);
 }
 
 void MainWindow::verticalScroll_valueChanged(int)
@@ -259,6 +311,7 @@ QString MainWindow::getFileDir(const QString fileName)
 void MainWindow::enableNavigations()
 {
     spinBoxPageNum->setEnabled(true);
+    spinBoxZoom->setEnabled(true);
     ui->actionGoFirst->setEnabled(true);
     ui->actionGoNext->setEnabled(true);
     ui->actionGoPrev->setEnabled(true);
@@ -268,6 +321,7 @@ void MainWindow::enableNavigations()
 void MainWindow::disableNavigations()
 {
     spinBoxPageNum->setEnabled(false);
+    spinBoxZoom->setEnabled(false);
     ui->actionGoFirst->setEnabled(false);
     ui->actionGoNext->setEnabled(false);
     ui->actionGoPrev->setEnabled(false);
@@ -392,6 +446,13 @@ void MainWindow::openDocument(const QString fileName)
     lastOpenFileDir = getFileDir(fileName);
 
     currentDocumentIndex = openDocuments.size() - 1;
+
+    // Update zoom
+    QSignalBlocker bl(spinBoxZoom);
+    qreal scale = document->getScale();
+    int zoom = scale * 100;
+
+    spinBoxZoom->setValue(zoom);
 }
 
 void MainWindow::saveSettings()

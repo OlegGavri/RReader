@@ -34,6 +34,8 @@ public:
     // Return/set current scale factor for the document
     virtual void zoomIn() = 0;
     virtual void zoomOut() = 0;
+    virtual void setScale(qreal) = 0;
+    virtual qreal getScale() const = 0;
 
     // Create new Document class for fileName file
     static Document * createDocument(const QString fileName);

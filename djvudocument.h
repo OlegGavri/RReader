@@ -24,6 +24,8 @@ public:
     ContentsItemModel * getContentItemModel() const override;
     void zoomIn() override;
     void zoomOut() override;
+    qreal getScale() const override;
+    void setScale(qreal) override;
 
 private:
     friend class DjvuPageGraphicsItem;

@@ -25,6 +25,7 @@ private:
     Ui::MainWindow *ui;
 
     QSpinBox * spinBoxPageNum;
+    QSpinBox * spinBoxZoom;
 
     // This vector contatain open documents.
     // Order of documents is the same as the order of tabs in MainWindow
@@ -47,6 +48,7 @@ private:
     // Navigate to page
     void showPage(const int pageNum);
 
+    void addZoomSpinBox();
     void addPageNumSpinBox();
 
     // Navigate to
@@ -89,6 +91,7 @@ public slots:
     void on_actionZoomIn_triggered(bool checked = false);
     void on_actionZoomOut_triggered(bool checked = false);
     void spinBoxPageNum_editingFinished();
+    void spinBoxZoom_editingFinished();
     void verticalScroll_valueChanged(int i);
 };
 #endif // MAINWINDOW_H
