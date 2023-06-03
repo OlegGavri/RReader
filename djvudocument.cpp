@@ -6,7 +6,12 @@
 
 using namespace std;
 
+// Gap beetween pages in pixel
 constexpr int PageGap = 10;
+
+// For Zoom in multiply scale on this value,
+// For Zoom out div scale on this value
+constexpr qreal ScaleFactor = 1.2;
 
 ddjvu_context_t * DjvuDocument::context = nullptr;
 
@@ -133,12 +138,14 @@ ContentsItemModel * DjvuDocument::getContentItemModel() const
 
 void DjvuDocument::zoomIn()
 {
-    //TODO:
+    currentScale *= ScaleFactor;
+    fillSceneWithPages();
 }
 
 void DjvuDocument::zoomOut()
 {
-    //TODO:
+    currentScale /= ScaleFactor;
+    fillSceneWithPages();
 }
 
 void DjvuDocument::fillSceneWithPages()

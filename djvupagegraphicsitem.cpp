@@ -65,8 +65,8 @@ QRectF DjvuPageGraphicsItem::boundingRect() const
     while(!ddjvu_page_decoding_done(page))
         handle_ddjvu_messages(context, true);
 
-    int w = ddjvu_page_get_width(page);
-    int h = ddjvu_page_get_height(page);
+    int w = ddjvu_page_get_width(page) * scale;
+    int h = ddjvu_page_get_height(page) * scale;
 
     return QRectF(- w/2 - PageBorderWidth/2, -h/2 - PageBorderWidth/2, w, h);
 }
@@ -86,8 +86,8 @@ void DjvuPageGraphicsItem::paint(
     while(!ddjvu_page_decoding_done(page))
         handle_ddjvu_messages(context, true);
 
-    int w = ddjvu_page_get_width(page);
-    int h = ddjvu_page_get_height(page);
+    int w = ddjvu_page_get_width(page) * scale;
+    int h = ddjvu_page_get_height(page) * scale;
 
     ddjvu_render_mode_t mode = DDJVU_RENDER_COLOR;
     ddjvu_rect_t pagerect = {0,0, static_cast<unsigned int>(w), static_cast<unsigned int>(h)};
