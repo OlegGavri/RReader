@@ -126,7 +126,7 @@ QVariant DjvuContentItemModel::data(
 
 QModelIndex DjvuContentItemModel::parent(const QModelIndex &index) const
 {
-    if(index.isValid())
+    if(!index.isValid())
         return QModelIndex();
 
     Node * node = static_cast<Node*>(index.internalPointer());
