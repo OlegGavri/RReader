@@ -452,7 +452,13 @@ void MainWindow::openDocument(const QString fileName)
         document->setScale(documentSettings.scale.value());
     }
 
-    showPage(0);
+    int page = 0;
+    if(documentSettings.page.has_value())
+    {
+        page = documentSettings.page.value();
+    }
+
+    showPage(page);
     enableNavigations();
 
     lastOpenFileDir = getFileDir(fileName);
@@ -522,10 +528,12 @@ void MainWindow::saveDocumentSettings(const Document * document)
 {
     QString documentName = document->getFileName();
     qreal scale = document->getScale();
+    int page = document->getCurrentPage();
 
     DocumentSettings documentSettings;
 
     documentSettings.scale = scale;
+    documentSettings.page = page;
 
     Settings::SetDocumentSettings(documentName, documentSettings);
 }

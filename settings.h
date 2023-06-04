@@ -13,7 +13,9 @@
 struct DocumentSettings
 {
     std::optional<qreal> scale;
-    //TODO: add current page
+
+    // Page on which document was opened
+    std::optional<int> page;
 };
 
 class Settings
