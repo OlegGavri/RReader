@@ -32,11 +32,17 @@ MainWindow::MainWindow(QWidget *parent)
     view->setScene(scene);
     view->setDragMode(QGraphicsView::ScrollHandDrag);
 
+    // Set Documents tab bar settings
+    QTabBar * tabBar = ui->tabBarDocuments;
+    tabBar->setTabsClosable(true);
+
     // Receive document scrolling signal for tracking current page number and etc.
     QScrollBar * verticalScrollBar = view->verticalScrollBar();
     connect(verticalScrollBar, &QAbstractSlider::valueChanged, this, &MainWindow::verticalScroll_valueChanged);
 
+    // Connect signals
     connect(ui->actionExit, &QAction::triggered, qApp, &QApplication::closeAllWindows, Qt::QueuedConnection);
+    connect(tabBar, &QTabBar::tabCloseRequested, this, &MainWindow::tabBarDocuments_tabCloseRequested);
 
     restoreSettings();
 }
@@ -298,6 +304,73 @@ void MainWindow::verticalScroll_valueChanged(int)
         document->setCurrentPage(pageNum);
         spinBoxPageNum->setValue(pageNum);
     }
+}
+
+void MainWindow::tabBarDocuments_tabCloseRequested(int index)
+{
+    QSignalBlocker blZoom(spinBoxZoom);
+    QSignalBlocker blPage(spinBoxPageNum);
+    QSignalBlocker blTabBar(ui->tabBarDocuments);
+
+    //
+    // Close document with index. If index is current switch to another document
+    // (to next document or to previouse if closed document is last in list)
+    //
+    Document * closedDocument = openDocuments[index];
+
+    QTabBar * tabBar = ui->tabBarDocuments;
+
+    if(index != currentDocumentIndex)
+    {
+        // Closed document is not current
+        openDocuments.removeAt(index);
+        delete closedDocument;
+    }
+    else
+    {
+        // Closed document is a current document
+        QGraphicsView * view = ui->graphicsView;
+        QTreeView * treeViewContent = ui->treeViewContent;
+
+        const int documentsNumber = openDocuments.size();
+
+        // If applicatoin contain only 1 document remove it, clear graphicsView and
+        // disable navigation
+        if(documentsNumber == 1)
+        {
+            openDocuments.clear();
+            view->setScene(nullptr);
+            treeViewContent->setModel(nullptr);
+
+            disableNavigations();
+
+            delete closedDocument;
+        }
+        else
+        {
+            // If there are more documents, close current and switch
+            // to another
+            const int switchedDocumentIndex = (index == documentsNumber - 1) ? index - 1 : index + 1;
+            const Document * switchedDocument = openDocuments[switchedDocumentIndex];
+
+            QGraphicsScene * scene = switchedDocument->getScene();
+            ContentsItemModel * model = switchedDocument->getContentItemModel();
+            int page = switchedDocument->getCurrentPage();
+            qreal scale = switchedDocument->getScale();
+
+            view->setScene(scene);
+            treeViewContent->setModel(model);
+
+            spinBoxPageNum->setValue(page);
+            int zoom = scale * 100;
+            spinBoxZoom->setValue(zoom);
+
+            openDocuments.removeAt(index);
+            delete closedDocument;
+        }
+    }
+
+    tabBar->removeTab(index);
 }
 
 QString MainWindow::getFileBaseName(const QString fileName)

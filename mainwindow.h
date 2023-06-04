@@ -80,6 +80,7 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 public slots:
+    // Auto connected slots
     void on_actionOpen_triggered(bool checked = false);
     void on_actionClose_triggered(bool checked = false);
     void on_actionGoFirst_triggered(bool checked = false);
@@ -91,8 +92,11 @@ public slots:
     void on_tabBarDocuments_currentChanged(int index);
     void on_actionZoomIn_triggered(bool checked = false);
     void on_actionZoomOut_triggered(bool checked = false);
+
+    // Slots connected in code
     void spinBoxPageNum_editingFinished();
     void spinBoxZoom_editingFinished();
     void verticalScroll_valueChanged(int i);
+    void tabBarDocuments_tabCloseRequested(int indes);
 };
 #endif // MAINWINDOW_H
