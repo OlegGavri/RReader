@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Set Documents tab bar settings
     QTabBar * tabBar = ui->tabBarDocuments;
     tabBar->setTabsClosable(true);
+    tabBar->setMovable(true);
 
     // Receive document scrolling signal for tracking current page number and etc.
     QScrollBar * verticalScrollBar = view->verticalScrollBar();
@@ -43,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Connect signals
     connect(ui->actionExit, &QAction::triggered, qApp, &QApplication::closeAllWindows, Qt::QueuedConnection);
     connect(tabBar, &QTabBar::tabCloseRequested, this, &MainWindow::tabBarDocuments_tabCloseRequested);
+    connect(tabBar, &QTabBar::tabMoved, this, &MainWindow::tabBardDocument_tabMoved);
 
     restoreSettings();
 }
@@ -371,6 +373,11 @@ void MainWindow::tabBarDocuments_tabCloseRequested(int index)
     }
 
     tabBar->removeTab(index);
+}
+
+void MainWindow::tabBardDocument_tabMoved(int from, int to)
+{
+    openDocuments.swapItemsAt(from, to);
 }
 
 QString MainWindow::getFileBaseName(const QString fileName)

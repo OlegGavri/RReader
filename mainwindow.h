@@ -98,5 +98,6 @@ public slots:
     void spinBoxZoom_editingFinished();
     void verticalScroll_valueChanged(int i);
     void tabBarDocuments_tabCloseRequested(int indes);
+    void tabBardDocument_tabMoved(int from, int to);
 };
 #endif // MAINWINDOW_H
