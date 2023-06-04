@@ -185,6 +185,11 @@ void MainWindow::on_actionContent_triggered(bool checked)
     ui->dockWidgetContent->setVisible(checked);
 }
 
+void MainWindow::on_actionExit_triggered(bool)
+{
+    qApp->quit();
+}
+
 void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
 {
     // User activate item in content. Go to selected content item.

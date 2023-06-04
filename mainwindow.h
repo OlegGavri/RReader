@@ -87,6 +87,7 @@ public slots:
     void on_actionGoNext_triggered(bool checked = false);
     void on_actionGoLast_triggered(bool checked = false);
     void on_actionContent_triggered(bool checked = false);
+    void on_actionExit_triggered(bool checked = false);
     void on_treeViewContent_activated(const QModelIndex &index);
     void on_tabBarDocuments_currentChanged(int index);
     void on_actionZoomIn_triggered(bool checked = false);
