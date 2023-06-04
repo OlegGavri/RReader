@@ -36,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent)
     QScrollBar * verticalScrollBar = view->verticalScrollBar();
     connect(verticalScrollBar, &QAbstractSlider::valueChanged, this, &MainWindow::verticalScroll_valueChanged);
 
+    connect(ui->actionExit, &QAction::triggered, qApp, &QApplication::closeAllWindows, Qt::QueuedConnection);
+
     restoreSettings();
 }
 
@@ -183,11 +185,6 @@ void MainWindow::on_actionGoLast_triggered(bool)
 void MainWindow::on_actionContent_triggered(bool checked)
 {
     ui->dockWidgetContent->setVisible(checked);
-}
-
-void MainWindow::on_actionExit_triggered(bool)
-{
-    qApp->quit();
 }
 
 void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
