@@ -15,6 +15,7 @@ class PdfContentItemModel : public ContentsItemModel
     // The structure to store Poppler::OutlineItem elements in tree form
     //
 
+    //TODO: use Tree<> class
     class TreeElement
     {
     public:
