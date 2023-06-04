@@ -37,7 +37,7 @@ void DjvuContentItemModel::parseOutline(
 {
     //
     // Outline has form:
-    // (bookmarks (#<num> (<name> <(inner list with)>)
+    // (bookmarks (<name> <#num> <(inner list with)>)
     //
 
     // Number of items
