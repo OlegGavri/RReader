@@ -61,7 +61,6 @@
     <addaction name="separator"/>
     <addaction name="menuExport"/>
     <addaction name="actionOptions"/>
-    <addaction name="actionRecent_files"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuView">

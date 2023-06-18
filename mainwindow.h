@@ -9,6 +9,7 @@
 #include <poppler/qt5/poppler-qt5.h>
 
 #include "pdfdocument.h"
+#include "recentfileslist.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -38,6 +39,11 @@ private:
 
     // Last open file dir
     QString lastOpenFileDir = QString();
+
+    // List of actions in menu File-><Recent documents>.
+    // This action text is document name, and user data is file path
+    RecentFilesList recentDocumentsAction;
+    QAction * recentFileSeparator;
 
     // Get name of file without path from full path
     static QString getFileBaseName(const QString fileName);
@@ -88,6 +94,11 @@ private:
     // index - switched document index
     void switchToDocument(const int index);
 
+    // Add new file in recent document list
+    void addRecentDocument(const QString fileName);
+
+    // Return paths of recent documents list
+    QList<QString> getRecentDocuments() const;
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -112,5 +123,8 @@ public slots:
     void verticalScroll_valueChanged(int i);
     void tabBarDocuments_tabCloseRequested(int indes);
     void tabBardDocument_tabMoved(int from, int to);
+
+    // Handle File-><recent document list> QAction
+    void recentDocumentAction_triggered(bool);
 };
 #endif // MAINWINDOW_H

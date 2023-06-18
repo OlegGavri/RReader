@@ -18,11 +18,18 @@ using namespace std;
 // Constants
 //
 
+const int RecentDocumentsListMaxSize = 5;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // Add separators for recent files list
+    ui->menuFile->insertSeparator(ui->actionExit);
+    recentFileSeparator = ui->menuFile->insertSeparator(ui->actionExit);
+
     addPageNumSpinBox();
     addZoomSpinBox();
 
@@ -107,6 +114,7 @@ void MainWindow::on_actionOpen_triggered(bool)
     {
         try{
             openDocument(fileName);
+            addRecentDocument(fileName);
         } catch (runtime_error & e) {
             QMessageBox::critical(this, "Error", e.what());
         }
@@ -385,6 +393,21 @@ void MainWindow::tabBardDocument_tabMoved(int from, int to)
     openDocuments[to] = temp;
     openDocuments[from] = temp;
 #endif
+}
+
+void MainWindow::recentDocumentAction_triggered(bool)
+{
+    QAction * senderAction = dynamic_cast<QAction*>(sender());
+    QString documentPath = senderAction->data().toString();
+
+    try {
+        openDocument(documentPath);
+    } catch(runtime_error & e) {
+        QMessageBox::critical(
+            this,
+            tr("Error"),
+            QString("Open file %1 error (%2)").arg(documentPath).arg(e.what()));
+    }
 }
 
 QString MainWindow::getFileBaseName(const QString fileName)
@@ -695,8 +718,11 @@ void MainWindow::switchToDocument(const int index)
     ui->treeViewContent->setModel(contentModel);
 
     // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
-    ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    if(contentModel != nullptr)
+    {
+        ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+        ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    }
 
     // Set zoom
     qreal scale = currentDocument->getScale();
@@ -706,6 +732,56 @@ void MainWindow::switchToDocument(const int index)
     ui->tabBarDocuments->setCurrentIndex(index);
 
     enableVerticalScrollBarSignal();
+}
+
+void MainWindow::addRecentDocument(const QString fileName)
+{
+    //
+    // Add new action in menu File. Text of action - base filename.
+    // user data of action - file path
+    // If recent file list contain more than maximum number of item, remove old item.
+    //
+    const QString text = getFileBaseName(fileName);
+    const QVariant path = fileName;
+
+    // If file with fileName already exist in recent files list, do anything
+    if(recentDocumentsAction.exist(fileName))
+        return;
+
+    QMenu * menu = ui->menuFile;
+
+    QAction * action = new QAction(text);
+    action->setData(path);
+
+    if(recentDocumentsAction.size() == RecentDocumentsListMaxSize)
+    {
+        QAction * lastAction = recentDocumentsAction.last();
+        menu->removeAction(lastAction);
+        recentDocumentsAction.removeLast();
+
+        delete lastAction;
+    }
+
+    recentDocumentsAction.push_back(action);
+
+    menu->insertAction(recentFileSeparator, action);
+
+    connect(action, &QAction::triggered, this, &MainWindow::recentDocumentAction_triggered);
+}
+
+QList<QString> MainWindow::getRecentDocuments() const
+{
+    QList<QString> list;
+    QString filePath;
+
+    QAction * action;
+    foreach(action, recentDocumentsAction)
+    {
+        QString path = action->data().toString();
+        list.push_back(path);
+    }
+
+    return list;
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)

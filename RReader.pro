@@ -25,6 +25,7 @@ SOURCES += \
     pdfcontentitemmodel.cpp \
     pdfdocument.cpp \
     pdfpagegraphicsitem.cpp \
+    recentfileslist.cpp \
     settings.cpp
 
 HEADERS += \
@@ -40,6 +41,7 @@ HEADERS += \
     pdfcontentitemmodel.h \
     pdfdocument.h \
     pdfpagegraphicsitem.h \
+    recentfileslist.h \
     settings.h
 
 FORMS += \
