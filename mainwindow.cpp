@@ -576,15 +576,15 @@ void MainWindow::saveSettings()
     QSettings settings;
 
     // Save list of open files
-    QList<QVariant> fileNameList;
+    QList<QString> fileNameList;
     Document * doc;
     foreach(doc, openDocuments)
     {
         QString fileName = doc->getFileName();
-        fileNameList.push_back(QVariant(fileName));
+        fileNameList.push_back(fileName);
     }
 
-    settings.setValue("openFilesList", QVariant(fileNameList));
+    Settings::SetDocumentsList(fileNameList);
 
     // Save window state
     settings.setValue("geometry", saveGeometry());
@@ -607,12 +607,10 @@ void MainWindow::restoreSettings()
     restoreState(settings.value("windowState").toByteArray());
 
     // Open files was opened in previouse session
-    QList<QVariant> fileNameList = settings.value("openFilesList").toList();
-    QVariant elem;
-    foreach(elem, fileNameList)
+    QList<QString> fileNameList = Settings::GetDocumentList();
+    QString fileName;
+    foreach(fileName, fileNameList)
     {
-        QString fileName = elem.toString();
-
         try {
             openDocument(fileName);
         } catch(runtime_error & e) {

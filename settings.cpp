@@ -55,3 +55,19 @@ void Settings::SetDocumentSettings(
         settings.setValue(pageKey, page.value());
     }
 }
+
+void Settings::SetDocumentsList(QList<QString> fileList)
+{
+    QSettings settings;
+    settings.setValue("openFilesList", QVariant(fileList));
+}
+
+QList<QString> Settings::GetDocumentList()
+{
+    //
+    // Get from settings QList<QVariant>, convert it to QList<QString>
+    //
+    QSettings settings;
+    QList<QString> fileList = settings.value("openFilesList").toStringList();
+    return fileList;
+}

@@ -32,6 +32,14 @@ public:
     // Set settings for document
     // Document name - file name with path
     static void SetDocumentSettings(const QString documentName, const DocumentSettings);
+
+    // Save in settins open documents list.
+    // Get list of filepath
+    static void SetDocumentsList(QList<QString>);
+
+    // Get from settings list of documents opended in last session
+    // Return list of filepath
+    static QList<QString> GetDocumentList();
 };
 
 #endif // SETTINGS_H
