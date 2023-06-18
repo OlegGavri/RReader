@@ -4,7 +4,6 @@
 #include <QMessageBox>
 #include <QLabel>
 #include <QGraphicsView>
-#include <QScrollBar>
 #include <QSettings>
 #include <QtDebug>
 
@@ -38,13 +37,15 @@ MainWindow::MainWindow(QWidget *parent)
     tabBar->setMovable(true);
 
     // Receive document scrolling signal for tracking current page number and etc.
-    QScrollBar * verticalScrollBar = view->verticalScrollBar();
-    connect(verticalScrollBar, &QAbstractSlider::valueChanged, this, &MainWindow::verticalScroll_valueChanged);
+    verticalScrollBar = view->verticalScrollBar();
+
 
     // Connect signals
     connect(ui->actionExit, &QAction::triggered, qApp, &QApplication::closeAllWindows, Qt::QueuedConnection);
     connect(tabBar, &QTabBar::tabCloseRequested, this, &MainWindow::tabBarDocuments_tabCloseRequested);
     connect(tabBar, &QTabBar::tabMoved, this, &MainWindow::tabBardDocument_tabMoved);
+
+    enableVerticalScrollBarSignal();
 
     restoreSettings();
 }
@@ -304,7 +305,7 @@ void MainWindow::verticalScroll_valueChanged(int)
         Document * document = getCurrentDocument();
 
         document->setCurrentPage(pageNum);
-        spinBoxPageNum->setValue(pageNum);
+        spinBoxPageNum->setValue(pageNum + 1);
     }
 }
 
@@ -414,6 +415,8 @@ void MainWindow::disableNavigations()
 
 void MainWindow::showPage(const int pageNum)
 {
+    disableVerticalScrollBarSignal();
+
     Document * document = getCurrentDocument();
     assert(pageNum < document->getPageNumber());
 
@@ -436,35 +439,49 @@ void MainWindow::showPage(const int pageNum)
     view->centerOn(0, centerPos);
 
     document->setCurrentPage(pageNum);
+
+    enableVerticalScrollBarSignal();
 }
 
 void MainWindow::goFirstPage()
 {
+    QSignalBlocker bl(spinBoxPageNum);
     showPage(0);
+    spinBoxPageNum->setValue(1);
 }
 
 void MainWindow::goPrevPage()
 {
+    QSignalBlocker bl(spinBoxPageNum);
+
     const int currPage = currentPage();
     if(currPage == 0)
         return;
 
     showPage(currPage - 1);
+    spinBoxPageNum->setValue(currPage);
 }
 
 void MainWindow::goNextPage()
 {
+    QSignalBlocker bl(spinBoxPageNum);
+
     const int currPage = currentPage();
 
     if(currPage == documentPageNumber() - 1)
         return;
 
     showPage(currPage + 1);
+    spinBoxPageNum->setValue(currPage + 2);
 }
 
 void MainWindow::goLastPage()
 {
-    showPage(documentPageNumber() - 1);
+    QSignalBlocker bl(spinBoxPageNum);
+    const int currPage = documentPageNumber();
+
+    showPage(currPage - 1);
+    spinBoxPageNum->setValue(currPage);
 }
 
 int MainWindow::currentPage() const
@@ -616,6 +633,24 @@ void MainWindow::saveDocumentSettings(const Document * document)
     documentSettings.page = page;
 
     Settings::SetDocumentSettings(documentName, documentSettings);
+}
+
+void MainWindow::enableVerticalScrollBarSignal()
+{
+    connect(
+        verticalScrollBar,
+        &QAbstractSlider::valueChanged,
+        this,
+        &MainWindow::verticalScroll_valueChanged);
+}
+
+void MainWindow::disableVerticalScrollBarSignal()
+{
+    disconnect(
+        verticalScrollBar,
+        &QAbstractSlider::valueChanged,
+        this,
+        &MainWindow::verticalScroll_valueChanged);
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)

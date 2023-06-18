@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsPixmapItem>
 #include <QSpinBox>
+#include <QScrollBar>
 
 #include <poppler/qt5/poppler-qt5.h>
 
@@ -26,6 +27,7 @@ private:
 
     QSpinBox * spinBoxPageNum;
     QSpinBox * spinBoxZoom;
+    QScrollBar * verticalScrollBar;
 
     // This vector contatain open documents.
     // Order of documents is the same as the order of tabs in MainWindow
@@ -75,6 +77,13 @@ private:
     void saveSettings();
     void restoreSettings();
     void saveDocumentSettings(const Document *);
+
+    // Enable/disable signal transfer from verticalScrollBar to
+    // slot in this window. Can't block all signals from verticalScrollBar because it is used
+    // for property widgets work. Only need block signal for this window
+    void enableVerticalScrollBarSignal();
+    void disableVerticalScrollBarSignal();
+
 
 protected:
     void closeEvent(QCloseEvent *event) override;
