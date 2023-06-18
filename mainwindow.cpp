@@ -585,6 +585,7 @@ void MainWindow::saveSettings()
     }
 
     Settings::SetDocumentsList(fileNameList);
+    Settings::SetOpenDocumentNumber(currentDocumentIndex);
 
     // Save window state
     settings.setValue("geometry", saveGeometry());
@@ -616,6 +617,14 @@ void MainWindow::restoreSettings()
         } catch(runtime_error & e) {
             qWarning() << "Error when open document " << fileName;
         }
+    }
+
+    optional<int> documentNum = Settings::GetOpenDocumentNumber();
+    if(documentNum.has_value())
+    {
+        const int index = documentNum.value();
+        if(index < openDocuments.size() && index >= 0)
+            switchToDocument(index);
     }
 }
 
@@ -649,6 +658,38 @@ void MainWindow::disableVerticalScrollBarSignal()
         &QAbstractSlider::valueChanged,
         this,
         &MainWindow::verticalScroll_valueChanged);
+}
+
+void MainWindow::switchToDocument(const int index)
+{
+    QSignalBlocker bl0(ui->tabBarDocuments);
+    QSignalBlocker bl1(spinBoxPageNum);
+    QSignalBlocker bl2(spinBoxZoom);
+    disableVerticalScrollBarSignal();
+
+    assert(index < openDocuments.size());
+    currentDocumentIndex = index;
+    Document * currentDocument = openDocuments[index];
+
+    QGraphicsScene * scene = currentDocument->getScene();
+    ContentsItemModel * contentModel = currentDocument->getContentItemModel();
+    int currentPage = currentDocument->getCurrentPage();
+
+    ui->graphicsView->setScene(scene);
+    ui->treeViewContent->setModel(contentModel);
+
+    // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
+    ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+
+    // Set zoom
+    qreal scale = currentDocument->getScale();
+    spinBoxZoom->setValue(scale * 100);
+
+    showPage(currentPage);
+    ui->tabBarDocuments->setCurrentIndex(index);
+
+    enableVerticalScrollBarSignal();
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)

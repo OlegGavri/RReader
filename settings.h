@@ -40,6 +40,12 @@ public:
     // Get from settings list of documents opended in last session
     // Return list of filepath
     static QList<QString> GetDocumentList();
+
+    // Save in settins number of currenlty open documents(in documents list)
+    static void SetOpenDocumentNumber(const int num);
+
+    // Return number of open document in docuemnt list from last session
+    static std::optional<int> GetOpenDocumentNumber();
 };
 
 #endif // SETTINGS_H

@@ -71,3 +71,21 @@ QList<QString> Settings::GetDocumentList()
     QList<QString> fileList = settings.value("openFilesList").toStringList();
     return fileList;
 }
+
+void Settings::SetOpenDocumentNumber(const int num)
+{
+    QSettings settings;
+    settings.setValue("openDocumentNum", num);
+}
+
+optional<int> Settings::GetOpenDocumentNumber()
+{
+    QSettings settings;
+    bool ok;
+    int num  = settings.value("openDocumentNum").toInt(&ok);
+
+    if(ok)
+        return num;
+    else
+        return nullopt;
+}

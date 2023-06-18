@@ -84,6 +84,10 @@ private:
     void enableVerticalScrollBarSignal();
     void disableVerticalScrollBarSignal();
 
+    // Switch to document in open documents
+    // index - switched document index
+    void switchToDocument(const int index);
+
 
 protected:
     void closeEvent(QCloseEvent *event) override;
