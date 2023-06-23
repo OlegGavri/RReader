@@ -561,12 +561,12 @@ void MainWindow::openDocument(const QString fileName)
         page = documentSettings.page.value();
     }
 
+    currentDocumentIndex = openDocuments.size() - 1;
+
     showPage(page);
     enableNavigations();
 
     lastOpenFileDir = getFileDir(fileName);
-
-    currentDocumentIndex = openDocuments.size() - 1;
 
     // Update zoom
     QSignalBlocker bl(spinBoxZoom);
