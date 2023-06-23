@@ -378,7 +378,13 @@ void MainWindow::tabBarDocuments_tabCloseRequested(int index)
 
 void MainWindow::tabBardDocument_tabMoved(int from, int to)
 {
+#if QT_VERSION >= 0x051400
     openDocuments.swapItemsAt(from, to);
+#else
+    Document * temp = openDocuments[to];
+    openDocuments[to] = temp;
+    openDocuments[from] = temp;
+#endif
 }
 
 QString MainWindow::getFileBaseName(const QString fileName)
