@@ -25,11 +25,6 @@ public:
     // Get page number of document
     int getPageNumber() const override;
 
-    // Get current page
-    int getCurrentPage() const override;
-
-    void setCurrentPage(int page) override;
-
     // Return content item model for this document
     // It cat set this model for QTreeView
     // Return nullptr, if model not present
@@ -50,8 +45,6 @@ private:
 
     // QAbstractItemModel for QTreeView. Contain contents
     PdfContentItemModel * contentItemModel = nullptr;
-
-    int currentPage = 0;
 
     qreal currentScale = 1.0;
 

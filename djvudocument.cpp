@@ -121,16 +121,6 @@ int DjvuDocument::getPageNumber() const
     return totalPageNumber;
 }
 
-int DjvuDocument::getCurrentPage() const
-{
-    return currentPage;
-}
-
-void DjvuDocument::setCurrentPage(int page)
-{
-    currentPage = page;
-}
-
 ContentsItemModel * DjvuDocument::getContentItemModel() const
 {
     return contentsItemModel;

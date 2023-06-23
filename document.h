@@ -22,9 +22,15 @@ public:
     virtual int getPageNumber() const = 0;
 
     // Get current page
-    virtual int getCurrentPage() const = 0;
+    int getCurrentPage() const
+    {
+        return currentPage;
+    }
 
-    virtual void setCurrentPage(int page) = 0;
+    void setCurrentPage(int page)
+    {
+        currentPage = page;
+    }
 
     // Return content item model for this document
     // It cat set this model for QTreeView
@@ -39,6 +45,9 @@ public:
 
     // Create new Document class for fileName file
     static Document * createDocument(const QString fileName);
+
+private:
+    int currentPage = 0;
 };
 
 #endif // DOCUMENT_H

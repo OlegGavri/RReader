@@ -57,16 +57,6 @@ int PdfDocument::getPageNumber() const
     return document->numPages();
 }
 
-int PdfDocument::getCurrentPage() const
-{
-    return currentPage;
-}
-
-void PdfDocument::setCurrentPage(int page)
-{
-    currentPage = page;
-}
-
 ContentsItemModel * PdfDocument::getContentItemModel() const
 {
     return static_cast<ContentsItemModel*>(contentItemModel);

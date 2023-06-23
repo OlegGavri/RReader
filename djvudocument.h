@@ -19,8 +19,6 @@ public:
     QGraphicsScene * getScene() const override;
     QString getFileName() const override;
     int getPageNumber() const override;
-    int getCurrentPage() const override;
-    void setCurrentPage(int page) override;
     ContentsItemModel * getContentItemModel() const override;
     void zoomIn() override;
     void zoomOut() override;
@@ -41,8 +39,6 @@ private:
 
     QGraphicsScene * scene;
     qreal currentScale = 1.0;
-
-    int currentPage = 0;
 
     // Number of pages in document
     int totalPageNumber = 0;
