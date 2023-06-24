@@ -602,6 +602,10 @@ void MainWindow::saveSettings()
     {
         saveDocumentSettings(doc);
     }
+
+    // Save recent documents list
+    QStringList recentDocumentsList = getRecentDocuments();
+    Settings::SetRecentDocuments(recentDocumentsList);
 }
 
 void MainWindow::restoreSettings()
@@ -614,7 +618,7 @@ void MainWindow::restoreSettings()
     restoreState(settings.value("windowState").toByteArray());
 
     // Open files was opened in previouse session
-    QList<QString> fileNameList = Settings::GetDocumentList();
+    QStringList fileNameList = Settings::GetDocumentList();
     QString fileName;
     foreach(fileName, fileNameList)
     {
@@ -631,6 +635,12 @@ void MainWindow::restoreSettings()
         const int index = documentNum.value();
         if(index < openDocuments.size() && index >= 0)
             switchToDocument(index);
+    }
+
+    QStringList recentDocuments = Settings::GetRecentDocuments();
+    foreach(fileName, recentDocuments)
+    {
+        addRecentDocument(fileName);
     }
 }
 

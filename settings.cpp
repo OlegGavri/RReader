@@ -56,19 +56,19 @@ void Settings::SetDocumentSettings(
     }
 }
 
-void Settings::SetDocumentsList(QList<QString> fileList)
+void Settings::SetDocumentsList(QStringList fileList)
 {
     QSettings settings;
     settings.setValue("openFilesList", QVariant(fileList));
 }
 
-QList<QString> Settings::GetDocumentList()
+QStringList Settings::GetDocumentList()
 {
     //
     // Get from settings QList<QVariant>, convert it to QList<QString>
     //
     QSettings settings;
-    QList<QString> fileList = settings.value("openFilesList").toStringList();
+    QStringList fileList = settings.value("openFilesList").toStringList();
     return fileList;
 }
 
@@ -88,4 +88,20 @@ optional<int> Settings::GetOpenDocumentNumber()
         return num;
     else
         return nullopt;
+}
+
+QStringList Settings::GetRecentDocuments()
+{
+    QSettings settings;
+    QVariant variant = settings.value("recentDocuments");
+    QStringList list = variant.toStringList();
+
+    return list;
+}
+
+void Settings::SetRecentDocuments(QStringList recentDocs)
+{
+    QSettings settings;
+    QVariant variant = QVariant::fromValue(recentDocs);
+    settings.setValue("recentDocuments", variant);
 }
