@@ -9,7 +9,7 @@ using namespace std;
 static QString getFileExtension(const QString fileName)
 {
     QFileInfo fileInfo(fileName);
-    return fileInfo.completeSuffix();
+    return fileInfo.suffix();
 }
 
 // Create new Document class for fileName file
