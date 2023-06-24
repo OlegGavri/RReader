@@ -52,6 +52,10 @@ DjvuPageGraphicsItem::DjvuPageGraphicsItem(
 
 }
 
+DjvuPageGraphicsItem::~DjvuPageGraphicsItem()
+{
+}
+
 QRectF DjvuPageGraphicsItem::boundingRect() const
 {
     ddjvu_page_t * page = ddjvu_page_create_by_pageno(

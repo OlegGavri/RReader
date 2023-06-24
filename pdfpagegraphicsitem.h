@@ -12,6 +12,7 @@ class PdfPageGraphicsItem : public PageGraphicsItem
 {
 public:
     PdfPageGraphicsItem(const Poppler::Document * popplerDocument, const int pageNum, const qreal scale);
+    ~PdfPageGraphicsItem() override;
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;

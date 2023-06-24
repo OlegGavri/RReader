@@ -15,6 +15,10 @@ PdfPageGraphicsItem::PdfPageGraphicsItem( const Poppler::Document * popplerDocum
 
 }
 
+PdfPageGraphicsItem::~PdfPageGraphicsItem()
+{
+}
+
 QRectF PdfPageGraphicsItem::boundingRect() const
 {
     Poppler::Page * page = popplerDocument->page(pageNum);

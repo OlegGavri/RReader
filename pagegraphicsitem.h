@@ -11,6 +11,8 @@
 class PageGraphicsItem : public QGraphicsItem
 {
 public:
+    ~PageGraphicsItem() override {}
+
     // Return y coordinate of top boundedRect side in scene coordinate system
     virtual qreal sceneYTop() const = 0;
 

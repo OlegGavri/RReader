@@ -26,6 +26,7 @@ public:
 
 public:
     explicit DjvuContentItemModel(miniexp_t outline, QObject * parent = nullptr);
+    ~DjvuContentItemModel() override {}
 
     // Overrided methods
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

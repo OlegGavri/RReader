@@ -13,6 +13,7 @@ class ContentsItemModel : public QAbstractItemModel
 {
 public:
     ContentsItemModel(QObject * parent = nullptr):QAbstractItemModel(parent){}
+    ~ContentsItemModel() override {}
 
     // Return page number associated with this content item. Use optionnal
     // because content item may not contation page number

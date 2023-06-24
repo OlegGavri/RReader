@@ -130,6 +130,7 @@ class PdfContentItemModel : public ContentsItemModel
 
 public:
     explicit PdfContentItemModel(QVector<Poppler::OutlineItem>, QObject * parent = nullptr);
+    ~PdfContentItemModel() override {}
 
     // Overrided methods
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;

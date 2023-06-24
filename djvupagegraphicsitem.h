@@ -9,6 +9,7 @@ class DjvuPageGraphicsItem : public PageGraphicsItem
 {
 public:
     DjvuPageGraphicsItem(ddjvu_document_t * const document, const int pageNum, const qreal scale);
+    ~DjvuPageGraphicsItem() override;
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem * option, QWidget * widget) override;
