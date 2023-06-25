@@ -206,12 +206,17 @@ void MainWindow::on_actionContent_triggered(bool checked)
 
 void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
 {
+    QSignalBlocker bl(spinBoxPageNum);
+
     // User activate item in content. Go to selected content item.
     ContentsItemModel * model = static_cast<ContentsItemModel*>(ui->treeViewContent->model());
     optional<int> page = model->getPageFor(index);
 
     if(page.has_value())
+    {
+        spinBoxPageNum->setValue(page.value());
         showPage(page.value());
+    }
 }
 
 void MainWindow::on_tabBarDocuments_currentChanged(int index)
@@ -236,6 +241,8 @@ void MainWindow::on_tabBarDocuments_currentChanged(int index)
     // Set zoom
     qreal scale = currentDocument->getScale();
     spinBoxZoom->setValue(scale * 100);
+
+    spinBoxPageNum->setValue(currentPage);
 
     showPage(currentPage);
 }
