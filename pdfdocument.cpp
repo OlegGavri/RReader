@@ -13,15 +13,13 @@ constexpr qreal ScaleFactor = 1.2;
 PdfDocument::PdfDocument(const QString fileName):
     fileName(fileName)
 {
-    DocumentSettings settings = Settings::GetDocumentSettings(fileName);
-    optional<qreal> scale = settings.scale;
-    optional<int> pageNum = settings.page;
+    optional<DocumentSettings> settings = Settings::GetDocumentSettings(fileName);
 
-    if(scale.has_value())
-        currentScale = scale.value();
-
-    if(pageNum.has_value())
-        setCurrentPage(pageNum.value());
+    if(settings.has_value())
+    {
+        currentScale = settings.value().scale;
+        setCurrentPage(settings.value().page);
+    }
 
     document = Poppler::Document::load(fileName);
     if(document == nullptr || document->isLocked())

@@ -87,13 +87,14 @@ DjvuDocument::DjvuDocument(const QString fileName):
     scene = new QGraphicsScene();
 
     // Restore document settings
-    DocumentSettings settings = Settings::GetDocumentSettings(fileName);
+    optional<DocumentSettings> settings = Settings::GetDocumentSettings(fileName);
 
-    if(settings.page.has_value())
-        setCurrentPage(settings.page.value());
 
-    if(settings.scale.has_value())
-        currentScale = settings.scale.value();
+    if(settings.has_value())
+    {
+        setCurrentPage(settings.value().page);
+        currentScale = settings.value().scale;
+    }
 
     fillSceneWithPages();
 

@@ -12,10 +12,11 @@
 
 struct DocumentSettings
 {
-    std::optional<qreal> scale;
+    // Document scale
+    qreal scale;
 
     // Page on which document was opened
-    std::optional<int> page;
+    int page;
 };
 
 class Settings
@@ -27,7 +28,7 @@ public:
 
     // Get settings for a specific document.
     // Document name - file name with path
-    static DocumentSettings GetDocumentSettings(const QString documentName);
+    static std::optional<DocumentSettings> GetDocumentSettings(const QString documentName);
 
     // Set settings for document
     // Document name - file name with path

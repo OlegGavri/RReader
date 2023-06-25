@@ -1,36 +1,41 @@
 #include <QSettings>
+#include <QDataStream>
 
 #include "settings.h"
 
 using namespace std;
 
-void Settings::Init()
+QDataStream & operator << (QDataStream & stream, const DocumentSettings & settings)
 {
+    stream << settings.page;
+    stream << settings.scale;
 
+    return stream;
 }
 
-DocumentSettings Settings::GetDocumentSettings(const QString documentName)
+QDataStream & operator >> (QDataStream & stream, DocumentSettings & settings)
 {
-    DocumentSettings documentSettings;
+    stream >> settings.page;
+    stream >> settings.scale;
+    return stream;
+}
 
-    const QString scaleKey = QString("documents/%1/scale").arg(documentName);
-    const QString pageKey = QString("documents/%1/page").arg(documentName);
+Q_DECLARE_METATYPE(DocumentSettings)
 
+void Settings::Init()
+{
+    qRegisterMetaTypeStreamOperators<DocumentSettings>("DocumentSettings");
+}
+
+optional<DocumentSettings> Settings::GetDocumentSettings(const QString documentName)
+{
     QSettings settings;
-    bool ok;
+    QVariant variant = settings.value(QString("docsettings/%1").arg(documentName));
 
-    qreal scale = settings.value(scaleKey).toReal(&ok);
-    if(ok)
-    {
-        documentSettings.scale = scale;
-    }
+    if(!variant.isValid())
+        return nullopt;
 
-    int page = settings.value(pageKey).toInt(&ok);
-    if(ok)
-    {
-        documentSettings.page = page;
-    }
-
+    DocumentSettings documentSettings = variant.value<DocumentSettings>();
     return documentSettings;
 }
 
@@ -38,22 +43,8 @@ void Settings::SetDocumentSettings(
     const QString documentName,
     const DocumentSettings documentSettings)
 {
-    const QString scaleKey = QString("documents/%1/scale").arg(documentName);
-    const QString pageKey = QString("documents/%1/page").arg(documentName);
-
     QSettings settings;
-
-    optional<qreal> scale = documentSettings.scale;
-    if(scale.has_value())
-    {
-        settings.setValue(scaleKey, scale.value());
-    }
-
-    optional<int> page = documentSettings.page;
-    if(page.has_value())
-    {
-        settings.setValue(pageKey, page.value());
-    }
+    settings.setValue(QString("docsettings/%1").arg(documentName), QVariant::fromValue(documentSettings));
 }
 
 void Settings::SetDocumentsList(QStringList fileList)

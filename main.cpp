@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "settings.h"
 
 #include <QApplication>
 
@@ -9,6 +10,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName("RReader");
     QCoreApplication::setOrganizationName("reffum");
     QCoreApplication::setOrganizationDomain("reffum.com");
+
+    Settings::Init();
 
     MainWindow w;
     w.show();
