@@ -2,6 +2,7 @@
 
 #include "pdfdocument.h"
 #include "pdfpagegraphicsitem.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -12,6 +13,16 @@ constexpr qreal ScaleFactor = 1.2;
 PdfDocument::PdfDocument(const QString fileName):
     fileName(fileName)
 {
+    DocumentSettings settings = Settings::GetDocumentSettings(fileName);
+    optional<qreal> scale = settings.scale;
+    optional<int> pageNum = settings.page;
+
+    if(scale.has_value())
+        currentScale = scale.value();
+
+    if(pageNum.has_value())
+        setCurrentPage(pageNum.value());
+
     document = Poppler::Document::load(fileName);
     if(document == nullptr || document->isLocked())
     {
@@ -83,6 +94,15 @@ void PdfDocument::setScale(qreal scale)
 {
     currentScale = scale;
     fillSceneWithPages();
+}
+
+void PdfDocument::saveSettings()
+{
+    DocumentSettings settings;
+    settings.page = getCurrentPage();
+    settings.scale = currentScale;
+
+    Settings::SetDocumentSettings(fileName, settings);
 }
 
 void PdfDocument::fillSceneWithPages()

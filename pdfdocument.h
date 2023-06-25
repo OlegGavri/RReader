@@ -36,6 +36,8 @@ public:
     qreal getScale() const override;
     void setScale(qreal) override;
 
+    void saveSettings() override;
+
 private:
     const QString fileName;
 

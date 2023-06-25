@@ -43,6 +43,9 @@ public:
     virtual void setScale(qreal) = 0;
     virtual qreal getScale() const = 0;
 
+    // Save document settins(page, scale, bookmars etc) in QSettings
+    virtual void saveSettings() = 0;
+
     // Create new Document class for fileName file
     static Document * createDocument(const QString fileName);
 

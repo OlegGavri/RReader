@@ -25,6 +25,8 @@ public:
     qreal getScale() const override;
     void setScale(qreal) override;
 
+    void saveSettings() override;
+
 private:
     friend class DjvuPageGraphicsItem;
 

@@ -3,6 +3,7 @@
 
 #include "djvudocument.h"
 #include "djvupagegraphicsitem.h"
+#include "settings.h"
 
 using namespace std;
 
@@ -85,6 +86,15 @@ DjvuDocument::DjvuDocument(const QString fileName):
     // Create QGraphicsScene and fill it with document pages
     scene = new QGraphicsScene();
 
+    // Restore document settings
+    DocumentSettings settings = Settings::GetDocumentSettings(fileName);
+
+    if(settings.page.has_value())
+        setCurrentPage(settings.page.value());
+
+    if(settings.scale.has_value())
+        currentScale = settings.scale.value();
+
     fillSceneWithPages();
 
     // Get contents item model
@@ -147,6 +157,15 @@ void DjvuDocument::setScale(qreal scale)
 {
     currentScale = scale;
     fillSceneWithPages();
+}
+
+void DjvuDocument::saveSettings()
+{
+    DocumentSettings settings;
+    settings.page = getCurrentPage();
+    settings.scale = currentScale;
+
+    Settings::SetDocumentSettings(fileName, settings);
 }
 
 void DjvuDocument::fillSceneWithPages()

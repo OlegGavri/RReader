@@ -143,7 +143,7 @@ void MainWindow::on_actionClose_triggered(bool)
 
     Document * closedDocument = openDocuments[closedDocIndex];
 
-    saveDocumentSettings(closedDocument);
+    closedDocument->saveSettings();
 
     if(docsNum == 1)
     {
@@ -570,23 +570,7 @@ void MainWindow::openDocument(const QString fileName)
     // Add new tab in Tab bar
     addTab(fileName);
 
-    // Restore document settings
-    DocumentSettings documentSettings = Settings::GetDocumentSettings(fileName);
-
-    if(documentSettings.scale.has_value())
-    {
-        document->setScale(documentSettings.scale.value());
-    }
-
-    int page = 0;
-    if(documentSettings.page.has_value())
-    {
-        page = documentSettings.page.value();
-    }
-
-    currentDocumentIndex = openDocuments.size() - 1;
-
-    showPage(page);
+    showPage(document->getCurrentPage());
     enableNavigations();
 
     lastOpenFileDir = getFileDir(fileName);
@@ -623,7 +607,7 @@ void MainWindow::saveSettings()
     // Save settings for each open document
     foreach(doc, openDocuments)
     {
-        saveDocumentSettings(doc);
+        doc->saveSettings();
     }
 
     // Save recent documents list
@@ -665,20 +649,6 @@ void MainWindow::restoreSettings()
     {
         addRecentDocument(fileName);
     }
-}
-
-void MainWindow::saveDocumentSettings(const Document * document)
-{
-    QString documentName = document->getFileName();
-    qreal scale = document->getScale();
-    int page = document->getCurrentPage();
-
-    DocumentSettings documentSettings;
-
-    documentSettings.scale = scale;
-    documentSettings.page = page;
-
-    Settings::SetDocumentSettings(documentName, documentSettings);
 }
 
 void MainWindow::enableVerticalScrollBarSignal()

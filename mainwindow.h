@@ -82,7 +82,6 @@ private:
 
     void saveSettings();
     void restoreSettings();
-    void saveDocumentSettings(const Document *);
 
     // Enable/disable signal transfer from verticalScrollBar to
     // slot in this window. Can't block all signals from verticalScrollBar because it is used
