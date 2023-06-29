@@ -16,31 +16,31 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    djvucontentitemmodel.cpp \
-    djvudocument.cpp \
-    djvupagegraphicsitem.cpp \
+    djvu/djvucontentitemmodel.cpp \
+    djvu/djvudocument.cpp \
+    djvu/djvupagegraphicsitem.cpp \
     document.cpp \
     main.cpp \
     mainwindow.cpp \
-    pdfcontentitemmodel.cpp \
-    pdfdocument.cpp \
-    pdfpagegraphicsitem.cpp \
+    pdf/pdfcontentitemmodel.cpp \
+    pdf/pdfdocument.cpp \
+    pdf/pdfpagegraphicsitem.cpp \
     recentfileslist.cpp \
     settings.cpp
 
 HEADERS += \
     contentsitemmodel.h \
     Tree.h \
-    djvucontentitemmodel.h \
-    djvudocument.h \
-    djvupagegraphicsitem.h \
+    djvu/djvucontentitemmodel.h \
+    djvu/djvudocument.h \
+    djvu/djvupagegraphicsitem.h \
     document.h \
     mainwindow.h \
-    pagegraphicsitem.h \
-    pagegraphicsitem.h \
-    pdfcontentitemmodel.h \
-    pdfdocument.h \
-    pdfpagegraphicsitem.h \
+    pdf/pagegraphicsitem.h \
+    pdf/pagegraphicsitem.h \
+    pdf/pdfcontentitemmodel.h \
+    pdf/pdfdocument.h \
+    pdf/pdfpagegraphicsitem.h \
     recentfileslist.h \
     settings.h
 
