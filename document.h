@@ -6,6 +6,7 @@
 #include <QAbstractItemModel>
 
 #include "contentsitemmodel.h"
+#include "bookmarksitemmodel.h"
 
 class Document
 {
@@ -33,9 +34,18 @@ public:
     }
 
     // Return content item model for this document
-    // It cat set this model for QTreeView
+    // It can set this model for QTreeView
     // Return nullptr, if model not present
     virtual ContentsItemModel * getContentItemModel() const = 0;
+
+
+    // Return bookmarks item model.
+    // It can use this model for QListView with bookmars
+    // Always return valid value(can't be null)
+    virtual BookmarksItemModel * getBookmarksItemMode()
+    {
+        return bookmarksItemModel;
+    }
 
     // Return/set current scale factor for the document
     virtual void zoomIn() = 0;
@@ -51,6 +61,11 @@ public:
 
 private:
     int currentPage = 0;
+
+protected:
+    // Bookmarks item model for this document. Inheritance classes must initiaze and
+    // work with this field.
+    BookmarksItemModel * bookmarksItemModel = nullptr;
 };
 
 #endif // DOCUMENT_H
