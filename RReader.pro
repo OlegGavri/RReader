@@ -50,6 +50,8 @@ FORMS += \
 TRANSLATIONS += \
     RReader_ru_RU.ts
 
+INCLUDEPATH += pdf/ djvu/
+
 LIBS += -lpoppler-qt5 -ldjvulibre
 
 # Default rules for deployment.
