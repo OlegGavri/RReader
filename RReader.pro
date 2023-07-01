@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    bookmarksitemmodel.cpp \
     djvu/djvucontentitemmodel.cpp \
     djvu/djvudocument.cpp \
     djvu/djvupagegraphicsitem.cpp \
@@ -32,6 +33,7 @@ HEADERS += \
     contentsitemmodel.h \
     Tree.h \
     bookmark.h \
+    bookmarksitemmodel.h \
     djvu/djvucontentitemmodel.h \
     djvu/djvudocument.h \
     djvu/djvupagegraphicsitem.h \
