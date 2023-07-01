@@ -31,6 +31,7 @@ SOURCES += \
 HEADERS += \
     contentsitemmodel.h \
     Tree.h \
+    bookmark.h \
     djvu/djvucontentitemmodel.h \
     djvu/djvudocument.h \
     djvu/djvupagegraphicsitem.h \
