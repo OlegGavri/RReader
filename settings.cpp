@@ -2,13 +2,30 @@
 #include <QDataStream>
 
 #include "settings.h"
+#include "bookmark.h"
 
 using namespace std;
+
+QDataStream & operator << (QDataStream & stream, const Bookmark & bookmark)
+{
+    stream << bookmark.pageNum;
+    stream << bookmark.text;
+
+    return stream;
+}
+
+QDataStream & operator >> (QDataStream & stream, Bookmark & bookmark)
+{
+    stream >> bookmark.pageNum;
+    stream >> bookmark.text;
+    return stream;
+}
 
 QDataStream & operator << (QDataStream & stream, const DocumentSettings & settings)
 {
     stream << settings.page;
     stream << settings.scale;
+    stream << settings.bookmarks;
 
     return stream;
 }
@@ -17,10 +34,13 @@ QDataStream & operator >> (QDataStream & stream, DocumentSettings & settings)
 {
     stream >> settings.page;
     stream >> settings.scale;
+    stream >> settings.bookmarks;
+
     return stream;
 }
 
 Q_DECLARE_METATYPE(DocumentSettings)
+Q_DECLARE_METATYPE(Bookmark)
 
 void Settings::Init()
 {

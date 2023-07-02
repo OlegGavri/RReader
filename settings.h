@@ -5,6 +5,8 @@
 
 #include <QStringList>
 
+#include "bookmark.h"
+
 //
 // Application settings
 // Settings about documents is saved with keys 'documents/<docname>/<key>
@@ -17,6 +19,9 @@ struct DocumentSettings
 
     // Page on which document was opened
     int page;
+
+    // Documents bookmarks
+    QList<Bookmark> bookmarks;
 };
 
 class Settings
