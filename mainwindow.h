@@ -5,6 +5,7 @@
 #include <QGraphicsPixmapItem>
 #include <QSpinBox>
 #include <QScrollBar>
+#include <QTableView>
 
 #include <poppler/qt5/poppler-qt5.h>
 
@@ -29,6 +30,10 @@ private:
     QSpinBox * spinBoxPageNum;
     QSpinBox * spinBoxZoom;
     QScrollBar * verticalScrollBar;
+
+    // Bookmarks dock widget
+    QDockWidget * dockWidgetBookmark;
+    QTableView * tableViewBookmarks;
 
     // This vector contatain open documents.
     // Order of documents is the same as the order of tabs in MainWindow
@@ -55,6 +60,9 @@ private:
 
     // Navigate to page
     void showPage(const int pageNum);
+
+    // Create Bookmarks DockWidget
+    void createBookmarkDockWidget();
 
     void addZoomSpinBox();
     void addPageNumSpinBox();

@@ -24,7 +24,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    // Create UI
     ui->setupUi(this);
+    createBookmarkDockWidget();
 
     // Add separators for recent files list
     ui->menuFile->insertSeparator(ui->actionExit);
@@ -60,6 +62,18 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::createBookmarkDockWidget()
+{
+    dockWidgetBookmark = new QDockWidget(tr("Bookmarks"), this);
+    dockWidgetBookmark->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    dockWidgetBookmark->setObjectName("dockWidgetBookmark");
+
+    tableViewBookmarks = new QTableView(this);
+    dockWidgetBookmark->setWidget(tableViewBookmarks);
+
+    tabifyDockWidget(ui->dockWidgetContent, dockWidgetBookmark);
 }
 
 void MainWindow::addZoomSpinBox()
@@ -564,6 +578,7 @@ void MainWindow::openDocument(const QString fileName)
 
     view->setScene(scene);
 
+    // Set open document Contents
     if(contentModel)
     {
         treeViewContent->setModel(contentModel);
@@ -573,6 +588,13 @@ void MainWindow::openDocument(const QString fileName)
     }
     else
         treeViewContent->setModel(nullptr);
+
+    // Set documents bookmarks
+    BookmarksItemModel * bookmarksItemModel = document->getBookmarksItemMode();
+    if(bookmarksItemModel)
+    {
+        tableViewBookmarks->setModel(bookmarksItemModel);
+    }
 
     // Add new tab in Tab bar
     addTab(fileName);
@@ -689,10 +711,13 @@ void MainWindow::switchToDocument(const int index)
 
     QGraphicsScene * scene = currentDocument->getScene();
     ContentsItemModel * contentModel = currentDocument->getContentItemModel();
+    BookmarksItemModel * bookmarksModel = currentDocument->getBookmarksItemMode();
+
     int currentPage = currentDocument->getCurrentPage();
 
     ui->graphicsView->setScene(scene);
     ui->treeViewContent->setModel(contentModel);
+    tableViewBookmarks->setModel(bookmarksModel);
 
     // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
     if(contentModel != nullptr)
