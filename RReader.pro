@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     bookmarksitemmodel.cpp \
+    bookmarkstableview.cpp \
     djvu/djvucontentitemmodel.cpp \
     djvu/djvudocument.cpp \
     djvu/djvupagegraphicsitem.cpp \
@@ -30,6 +31,7 @@ SOURCES += \
     settings.cpp
 
 HEADERS += \
+    bookmarkstableview.h \
     contentsitemmodel.h \
     Tree.h \
     bookmark.h \

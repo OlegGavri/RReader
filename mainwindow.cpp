@@ -70,7 +70,7 @@ void MainWindow::createBookmarkDockWidget()
     dockWidgetBookmark->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
     dockWidgetBookmark->setObjectName("dockWidgetBookmark");
 
-    tableViewBookmarks = new QTableView(this);
+    tableViewBookmarks = new BookmarksTableView(this);
     dockWidgetBookmark->setWidget(tableViewBookmarks);
 
     tabifyDockWidget(ui->dockWidgetContent, dockWidgetBookmark);

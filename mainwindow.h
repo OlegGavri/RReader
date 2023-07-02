@@ -9,7 +9,8 @@
 
 #include <poppler/qt5/poppler-qt5.h>
 
-#include "pdfdocument.h"
+#include "bookmarkstableview.h"
+#include "document.h"
 #include "recentfileslist.h"
 
 QT_BEGIN_NAMESPACE
@@ -33,7 +34,7 @@ private:
 
     // Bookmarks dock widget
     QDockWidget * dockWidgetBookmark;
-    QTableView * tableViewBookmarks;
+    BookmarksTableView * tableViewBookmarks;
 
     // This vector contatain open documents.
     // Order of documents is the same as the order of tabs in MainWindow
