@@ -63,6 +63,9 @@ private:
     int currentPage = 0;
 
 protected:
+    // Document bookmarks
+    QList<Bookmark> bookmarks;
+
     // Bookmarks item model for this document. Inheritance classes must initiaze and
     // work with this field.
     BookmarksItemModel * bookmarksItemModel = nullptr;
