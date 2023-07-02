@@ -11,7 +11,7 @@
 class Document
 {
 public:
-    virtual ~Document() = 0;
+    virtual ~Document();
 
     // Graphic scene with pages
     virtual QGraphicsScene * getScene() const = 0;
