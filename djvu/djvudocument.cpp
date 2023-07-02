@@ -94,6 +94,7 @@ DjvuDocument::DjvuDocument(const QString fileName):
     {
         setCurrentPage(settings.value().page);
         currentScale = settings.value().scale;
+        bookmarks = settings.value().bookmarks;
     }
 
     fillSceneWithPages();
@@ -107,6 +108,9 @@ DjvuDocument::DjvuDocument(const QString fileName):
     {
         contentsItemModel = new DjvuContentItemModel(expOutline);
     }
+
+    // Create bookmarks item model
+    bookmarksItemModel = new BookmarksItemModel(bookmarks);
 }
 
 DjvuDocument::~DjvuDocument()
@@ -115,6 +119,7 @@ DjvuDocument::~DjvuDocument()
     ddjvu_context_release(context);
     delete scene;
     delete contentsItemModel;
+    delete bookmarksItemModel;
 }
 
 QGraphicsScene * DjvuDocument::getScene() const

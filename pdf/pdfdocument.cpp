@@ -19,6 +19,7 @@ PdfDocument::PdfDocument(const QString fileName):
     {
         currentScale = settings.value().scale;
         setCurrentPage(settings.value().page);
+        bookmarks = settings.value().bookmarks;
     }
 
     document = Poppler::Document::load(fileName);
@@ -42,6 +43,9 @@ PdfDocument::PdfDocument(const QString fileName):
         contentItemModel = new PdfContentItemModel(outline);
     else
         contentItemModel = nullptr;
+
+    // Create bookmarks item model
+    bookmarksItemModel = new BookmarksItemModel(bookmarks);
 }
 
 PdfDocument::~PdfDocument()
@@ -49,6 +53,7 @@ PdfDocument::~PdfDocument()
     delete scene;
     delete document;
     delete contentItemModel;
+    delete bookmarksItemModel;
 }
 
 QString PdfDocument::getFileName() const
