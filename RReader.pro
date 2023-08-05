@@ -56,8 +56,18 @@ LIBS += -lpoppler-qt5 -ldjvulibre
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+else: unix:!android: target.path = /usr/bin/bin
 !isEmpty(target.path): INSTALLS += target
+
+unix {
+    desktop.path  = /usr/share/applications
+    desktop.files = resources/rreader.desktop
+
+    icons.path = /usr/share/
+    icons.files = resources/icons/RReader.png
+
+    INSTALLS += desktop icons
+}
 
 RESOURCES += \
     resoures.qrc
