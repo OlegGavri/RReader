@@ -20,7 +20,7 @@ using namespace std;
 
 const int RecentDocumentsListMaxSize = 5;
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(const QStringList openDocuments, QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -53,6 +53,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(tabBar, &QTabBar::tabMoved, this, &MainWindow::tabBardDocument_tabMoved);
 
     enableVerticalScrollBarSignal();
+
+    // Open documents
+    QString fileName;
+    foreach(fileName, openDocuments)
+    {
+        try {
+            openDocument(fileName);
+        } catch(runtime_error & e) {
+            qWarning() << "Error when open document " << fileName;
+        }
+    }
 
     restoreSettings();
 }

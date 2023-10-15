@@ -8,7 +8,7 @@
 
 #include <poppler/qt5/poppler-qt5.h>
 
-#include "pdfdocument.h"
+#include "document.h"
 #include "recentfileslist.h"
 
 QT_BEGIN_NAMESPACE
@@ -20,7 +20,10 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    // Create application window, open documents from command line and from
+    // previouse session. Read and apply settings.
+    // openDocumenst - list of documents(system path to it) for open
+    MainWindow(const QStringList openDocuemnts, QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
