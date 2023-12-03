@@ -1,9 +1,0 @@
-Package: rreader
-Version: 0.0.1-beta
-Section: science
-Priority: optional
-Architecture: amd64
-Depends: libpoppler-qt5-1, libdjvulibre21, libc6 (>= 2.28)
-Maintainer: Oleg Gavrilchenko <oleggavrilcenko6@gmail.com>
-Description: Simple PDF and DJVU documents reader.
- Use Qt.
