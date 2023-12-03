@@ -245,9 +245,14 @@ void MainWindow::on_tabBarDocuments_currentChanged(int index)
 
     ui->graphicsView->setScene(scene);
     ui->treeViewContent->setModel(contentModel);
-    // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
-    ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-    ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+
+    // Since current document was changed and contentMode was changed it is needed to resize it
+    // First column("Name") take all aviable size, second(page number) minimum size.
+    if(contentModel)
+    {
+        ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
+        ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    }
 
     // Set zoom
     qreal scale = currentDocument->getScale();
