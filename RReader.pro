@@ -23,6 +23,7 @@ SOURCES += \
     djvu/djvudocument.cpp \
     djvu/djvupagegraphicsitem.cpp \
     document.cpp \
+    documents.cpp \
     main.cpp \
     mainwindow.cpp \
     pdf/pdfcontentitemmodel.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     djvu/djvudocument.h \
     djvu/djvupagegraphicsitem.h \
     document.h \
+    documents.h \
     mainwindow.h \
     pdf/pagegraphicsitem.h \
     pdf/pagegraphicsitem.h \

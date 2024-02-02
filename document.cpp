@@ -27,3 +27,9 @@ Document * Document::createDocument(const QString fileName)
 Document::~Document()
 {
 }
+
+QString Document::getName() const
+{
+    QFileInfo fileInfo(getFileName());
+    return fileInfo.baseName();
+}

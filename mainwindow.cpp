@@ -1,5 +1,7 @@
 #include <stdexcept>
 
+#include <syslog.h>
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QLabel>
@@ -10,17 +12,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "pagegraphicsitem.h"
-#include "settings.h"
+#include "documents.h"
 
 using namespace std;
 
-//
-// Constants
-//
-
-const int RecentDocumentsListMaxSize = 5;
-
-MainWindow::MainWindow(const QStringList openDocuments, QWidget *parent)
+MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -33,9 +29,8 @@ MainWindow::MainWindow(const QStringList openDocuments, QWidget *parent)
     addPageNumSpinBox();
     addZoomSpinBox();
 
-    QGraphicsScene * scene = new QGraphicsScene();
     QGraphicsView * view = ui->graphicsView;
-    view->setScene(scene);
+    QTreeView * treeViewContent = ui->treeViewContent;
     view->setDragMode(QGraphicsView::ScrollHandDrag);
 
     // Set Documents tab bar settings
@@ -46,6 +41,27 @@ MainWindow::MainWindow(const QStringList openDocuments, QWidget *parent)
     // Receive document scrolling signal for tracking current page number and etc.
     verticalScrollBar = view->verticalScrollBar();
 
+    // For each currently open documents create Tab bar, select current and
+    // seting widgets to it.
+    if(Documents::getCount() > 0)
+    {
+        for(int i = 0; i < Documents::getCount(); i++)
+        {
+            Document & doc = Documents::getDocument(i);
+            tabBar->addTab(doc.getName());
+        }
+
+        Document & doc = Documents::getCurrent();
+        QGraphicsScene * scene = doc.getScene();
+        ContentsItemModel * model =doc.getContentItemModel();
+
+        view->setScene(scene);
+        treeViewContent->setModel(model);
+
+        enableNavigations();
+    }
+
+    setRecentDocuments(Documents::getRecentDocuments());
 
     // Connect signals
     connect(ui->actionExit, &QAction::triggered, qApp, &QApplication::closeAllWindows, Qt::QueuedConnection);
@@ -53,19 +69,6 @@ MainWindow::MainWindow(const QStringList openDocuments, QWidget *parent)
     connect(tabBar, &QTabBar::tabMoved, this, &MainWindow::tabBardDocument_tabMoved);
 
     enableVerticalScrollBarSignal();
-
-    // Open documents
-    QString fileName;
-    foreach(fileName, openDocuments)
-    {
-        try {
-            openDocument(fileName);
-        } catch(runtime_error & e) {
-            qWarning() << "Error when open document " << fileName;
-        }
-    }
-
-    restoreSettings();
 }
 
 MainWindow::~MainWindow()
@@ -115,18 +118,43 @@ void MainWindow::addPageNumSpinBox()
 
 void MainWindow::on_actionOpen_triggered(bool)
 {
+    QString lastOpenDir = Documents::getLastOpenDir();
     QString fileName = QFileDialog::getOpenFileName(
         this,
         tr("Open file"),
-        lastOpenFileDir.isEmpty() ? QDir::homePath() : lastOpenFileDir,
+        lastOpenDir,
         "PDF documents(*.pdf *.djvu)");
 
     if(!fileName.isEmpty())
     {
         try{
-            openDocument(fileName);
-            addRecentDocument(fileName);
+            Document & doc = Documents::open(fileName);
+            int newTabIndex = Documents::getCurrentNumber();
+
+            QGraphicsView * view = ui->graphicsView;
+            QTreeView * treeViewContent = ui->treeViewContent;
+            QTabBar * tabBar = ui->tabBarDocuments;
+            tabBar->insertTab(newTabIndex, doc.getName());
+
+            QGraphicsScene * scene = doc.getScene();
+            QAbstractItemModel * contentModel = doc.getContentItemModel();
+            int currentPage = doc.getCurrentPage();
+
+            view->setScene(scene);
+            treeViewContent->setModel(contentModel);
+
+            // Set page spin box value and limits
+            spinBoxPageNum->setValue(currentPage);
+            spinBoxPageNum->setMaximum(doc.getPageNumber());
+
+            showPage(currentPage);
+
+            setRecentDocuments(Documents::getRecentDocuments());
+
+            enableNavigations();
+            ui->actionClose->setEnabled(true);
         } catch (runtime_error & e) {
+            syslog(LOG_ERR, "Open file %s error: %s", fileName.toStdString().c_str(), e.what());
             QMessageBox::critical(this, "Error", e.what());
         }
     }
@@ -143,71 +171,97 @@ void MainWindow::on_actionClose_triggered(bool)
 
     QSignalBlocker blocker(tabBar);
 
-    const int docsNum = openDocuments.size();
+    int docNum = Documents::getCurrentNumber();
+    tabBar->removeTab(docNum);
 
-    if(docsNum == 0)
-    {
-        return;
-    }
+    Documents::closeCurrent();
 
-    int closedDocIndex = currentDocumentIndex;
-
-    Document * closedDocument = openDocuments[closedDocIndex];
-
-    closedDocument->saveSettings();
-
-    if(docsNum == 1)
+    if(Documents::getCount() == 0)
     {
         view->setScene(nullptr);
         treeViewContent->setModel(nullptr);
         disableNavigations();
-
-        openDocuments.clear();
-        delete closedDocument;
-        tabBar->removeTab(0);
-
-        currentDocumentIndex = 0;
+        ui->actionClose->setEnabled(false);
     }
     else
     {
-        int switchedDocIndex = (closedDocIndex == docsNum - 1) ? closedDocIndex - 1 : closedDocIndex + 1;
-        Document * switchedDocument = openDocuments[switchedDocIndex];
+        Document & doc = Documents::getCurrent();
+        tabBar->removeTab(docNum);
 
-        QGraphicsScene * scene = switchedDocument->getScene();
-        QAbstractItemModel * contentModel = switchedDocument->getContentItemModel();
-        int currentPage = switchedDocument->getCurrentPage();
+        QGraphicsScene * scene = doc.getScene();
+        QAbstractItemModel * contentModel = doc.getContentItemModel();
+        int currentPage = doc.getCurrentPage();
+
 
         view->setScene(scene);
         treeViewContent->setModel(contentModel);
+
+        // Set page spin box value and limits
+        spinBoxPageNum->setValue(currentPage);
+        spinBoxPageNum->setMaximum(doc.getPageNumber());
+
         showPage(currentPage);
-
-        tabBar->removeTab(closedDocIndex);
-
-        openDocuments.removeAt(closedDocIndex);
-        delete closedDocument;
-
-        currentDocumentIndex = openDocuments.indexOf(switchedDocument);
     }
 }
 
 void MainWindow::on_actionGoFirst_triggered(bool)
 {
-    goFirstPage();
+    QSignalBlocker bl(spinBoxPageNum);
+    spinBoxPageNum->setValue(1);
+
+    Document & doc = Documents::getCurrent();
+    showPage(doc.getCurrentPage());
 }
 
 void MainWindow::on_actionGoPrev_triggered(bool)
 {
-    goPrevPage();
+    QSignalBlocker bl(spinBoxPageNum);
+
+    Document & doc = Documents::getCurrent();
+    int currentPage = doc.getCurrentPage();
+
+    if(currentPage > 0)
+    {
+        currentPage--;
+        doc.setCurrentPage(currentPage);
+        showPage(currentPage);
+
+        spinBoxPageNum->setValue(currentPage+1);
+    }
 }
 
 void MainWindow::on_actionGoNext_triggered(bool)
 {
-    goNextPage();
+    QSignalBlocker bl(spinBoxPageNum);
+
+    Document & doc = Documents::getCurrent();
+    int currentPage = doc.getCurrentPage();
+
+    if(currentPage < doc.getPageNumber() - 1)
+    {
+        currentPage++;
+        doc.setCurrentPage(currentPage);
+        showPage(currentPage);
+
+        spinBoxPageNum->setValue(currentPage + 1);
+    }
 }
 
 void MainWindow::on_actionGoLast_triggered(bool)
 {
-    goLastPage();
+    QSignalBlocker bl(spinBoxPageNum);
+
+    Document & doc = Documents::getCurrent();
+    int currentPage = doc.getCurrentPage();
+
+    if(currentPage < doc.getPageNumber() -1 )
+    {
+        currentPage = doc.getPageNumber() - 1;
+        doc.setCurrentPage(currentPage);
+        showPage(currentPage);
+
+        spinBoxPageNum->setValue(currentPage + 1);
+    }
 }
 
 void MainWindow::on_actionContent_triggered(bool checked)
@@ -225,8 +279,11 @@ void MainWindow::on_treeViewContent_activated(const QModelIndex &index)
 
     if(page.has_value())
     {
-        spinBoxPageNum->setValue(page.value());
+        Document & doc = Documents::getCurrent();
+        doc.setCurrentPage(page.value());
         showPage(page.value());
+
+        spinBoxPageNum->setValue(page.value() + 1);
     }
 }
 
@@ -235,13 +292,13 @@ void MainWindow::on_tabBarDocuments_currentChanged(int index)
     QSignalBlocker bl0(spinBoxZoom);
     QSignalBlocker bl1(spinBoxPageNum);
 
-    // Change current document, scene and content tree
-    currentDocumentIndex = index;
-    Document * currentDocument = openDocuments[index];
+    Documents::setCurrent(index);
 
-    QGraphicsScene * scene = currentDocument->getScene();
-    ContentsItemModel * contentModel = currentDocument->getContentItemModel();
-    int currentPage = currentDocument->getCurrentPage();
+    Document & doc = Documents::getCurrent();
+
+    QGraphicsScene * scene = doc.getScene();
+    ContentsItemModel * contentModel = doc.getContentItemModel();
+    int currentPage = doc.getCurrentPage();
 
     ui->graphicsView->setScene(scene);
     ui->treeViewContent->setModel(contentModel);
@@ -255,7 +312,7 @@ void MainWindow::on_tabBarDocuments_currentChanged(int index)
     }
 
     // Set zoom
-    qreal scale = currentDocument->getScale();
+    qreal scale = doc.getScale();
     spinBoxZoom->setValue(scale * 100);
 
     spinBoxPageNum->setValue(currentPage);
@@ -265,14 +322,14 @@ void MainWindow::on_tabBarDocuments_currentChanged(int index)
 
 void MainWindow::on_actionZoomIn_triggered(bool)
 {
-    Document * currentDoc = getCurrentDocument();
-    int currentPage = currentDoc->getCurrentPage();
+    Document & doc = Documents::getCurrent();
+    int currentPage = doc.getCurrentPage();
 
-    currentDoc->zoomIn();
+    doc.zoomIn();
     showPage(currentPage);
 
     // Update zoom spin box
-    qreal scale = currentDoc->getScale();
+    qreal scale = doc.getScale();
     int zoom = scale * 100;
 
     QSignalBlocker bl(spinBoxZoom);
@@ -281,14 +338,14 @@ void MainWindow::on_actionZoomIn_triggered(bool)
 
 void MainWindow::on_actionZoomOut_triggered(bool)
 {
-    Document * currentDoc = getCurrentDocument();
-    int currentPage = currentDoc->getCurrentPage();
+    Document & doc = Documents::getCurrent();
+    int currentPage = doc.getCurrentPage();
 
-    currentDoc->zoomOut();
+    doc.zoomOut();
     showPage(currentPage);
 
     // Update zoom spin box
-    qreal scale = currentDoc->getScale();
+    qreal scale = doc.getScale();
     int zoom = scale * 100;
 
     QSignalBlocker bl(spinBoxZoom);
@@ -299,6 +356,10 @@ void MainWindow::spinBoxPageNum_editingFinished()
 {
     // Go to page pageNum
     const int pageNum = spinBoxPageNum->value() - 1;
+    Document & doc = Documents::getCurrent();
+    assert(pageNum < doc.getPageNumber());
+
+    doc.setCurrentPage(pageNum);
     showPage(pageNum);
 }
 
@@ -308,8 +369,8 @@ void MainWindow::spinBoxZoom_editingFinished()
     const int zoom = spinBoxZoom->value();
     const qreal scale = (qreal)(zoom) / 100.0;
 
-    Document * document = getCurrentDocument();
-    document->setScale(scale);
+    Document & doc = Documents::getCurrent();
+    doc.setScale(scale);
 }
 
 void MainWindow::verticalScroll_valueChanged(int)
@@ -333,9 +394,9 @@ void MainWindow::verticalScroll_valueChanged(int)
         PageGraphicsItem * pageItem = static_cast<PageGraphicsItem*>(item);
         const int pageNum = pageItem->getPageNum();
 
-        Document * document = getCurrentDocument();
+        Document & doc = Documents::getCurrent();
 
-        document->setCurrentPage(pageNum);
+        doc.setCurrentPage(pageNum);
         spinBoxPageNum->setValue(pageNum + 1);
     }
 }
@@ -346,61 +407,39 @@ void MainWindow::tabBarDocuments_tabCloseRequested(int index)
     QSignalBlocker blPage(spinBoxPageNum);
     QSignalBlocker blTabBar(ui->tabBarDocuments);
 
+    QTabBar * tabBar = ui->tabBarDocuments;
+    Documents::close(index);
+
     //
     // Close document with index. If index is current switch to another document
     // (to next document or to previouse if closed document is last in list)
     //
-    Document * closedDocument = openDocuments[index];
-
-    QTabBar * tabBar = ui->tabBarDocuments;
-
-    if(index != currentDocumentIndex)
-    {
-        // Closed document is not current
-        openDocuments.removeAt(index);
-        delete closedDocument;
-    }
-    else
+    if(index == Documents::getCurrentNumber())
     {
         // Closed document is a current document
         QGraphicsView * view = ui->graphicsView;
         QTreeView * treeViewContent = ui->treeViewContent;
 
-        const int documentsNumber = openDocuments.size();
-
-        // If applicatoin contain only 1 document remove it, clear graphicsView and
-        // disable navigation
-        if(documentsNumber == 1)
+        if(Documents::getCount() == 1)
         {
-            openDocuments.clear();
             view->setScene(nullptr);
             treeViewContent->setModel(nullptr);
-
             disableNavigations();
-
-            delete closedDocument;
         }
         else
         {
-            // If there are more documents, close current and switch
-            // to another
-            const int switchedDocumentIndex = (index == documentsNumber - 1) ? index - 1 : index + 1;
-            const Document * switchedDocument = openDocuments[switchedDocumentIndex];
+            Document & doc = Documents::getCurrent();
 
-            QGraphicsScene * scene = switchedDocument->getScene();
-            ContentsItemModel * model = switchedDocument->getContentItemModel();
-            int page = switchedDocument->getCurrentPage();
-            qreal scale = switchedDocument->getScale();
+            QGraphicsScene * scene = doc.getScene();
+            ContentsItemModel * model = doc.getContentItemModel();
+            int page = doc.getCurrentPage();
+            int scale = doc.getScale();
 
             view->setScene(scene);
             treeViewContent->setModel(model);
-
-            spinBoxPageNum->setValue(page);
-            int zoom = scale * 100;
-            spinBoxZoom->setValue(zoom);
-
-            openDocuments.removeAt(index);
-            delete closedDocument;
+            spinBoxZoom->setValue(scale * 100.0);
+            spinBoxPageNum->setValue(page + 1);
+            spinBoxPageNum->setMaximum(doc.getPageNumber());
         }
     }
 
@@ -409,13 +448,7 @@ void MainWindow::tabBarDocuments_tabCloseRequested(int index)
 
 void MainWindow::tabBardDocument_tabMoved(int from, int to)
 {
-#if QT_VERSION >= 0x051400
-    openDocuments.swapItemsAt(from, to);
-#else
-    Document * temp = openDocuments[to];
-    openDocuments[to] = temp;
-    openDocuments[from] = temp;
-#endif
+    Documents::swap(from, to);
 }
 
 void MainWindow::recentDocumentAction_triggered(bool)
@@ -423,26 +456,42 @@ void MainWindow::recentDocumentAction_triggered(bool)
     QAction * senderAction = dynamic_cast<QAction*>(sender());
     QString documentPath = senderAction->data().toString();
 
+    QSignalBlocker blocker(spinBoxPageNum);
+
     try {
-        openDocument(documentPath);
+        Document & newDoc = Documents::open(documentPath);
+        int newTabIndex = Documents::getCurrentNumber();
+
+        QGraphicsView * view = ui->graphicsView;
+        QTreeView * treeViewContents = ui->treeViewContent;
+        QTabBar * tabBar = ui->tabBarDocuments;
+
+        QGraphicsScene * scene = newDoc.getScene();
+        QAbstractItemModel * contentsModel = newDoc.getContentItemModel();
+
+        int currentPage = newDoc.getCurrentPage();
+
+        view->setScene(scene);
+        treeViewContents->setModel(contentsModel);
+        tabBar->insertTab(newTabIndex, newDoc.getName());
+        tabBar->setCurrentIndex(newTabIndex);
+
+        spinBoxPageNum->setValue(currentPage);
+        spinBoxPageNum->setMaximum(newDoc.getPageNumber());
+
+        showPage(currentPage);
+
+        setRecentDocuments(Documents::getRecentDocuments());
+
+        enableNavigations();
+        ui->actionClose->setEnabled(true);
     } catch(runtime_error & e) {
+        syslog(LOG_ERR, "Open file %s error: %s", documentPath.toStdString().c_str(), e.what());
         QMessageBox::critical(
             this,
             tr("Error"),
             QString("Open file %1 error (%2)").arg(documentPath).arg(e.what()));
     }
-}
-
-QString MainWindow::getFileBaseName(const QString fileName)
-{
-    QFileInfo fileInfo(fileName);
-    return fileInfo.baseName();
-}
-
-QString MainWindow::getFileDir(const QString fileName)
-{
-    QFileInfo fileInfo(fileName);
-    return fileInfo.absoluteFilePath();
 }
 
 void MainWindow::enableNavigations()
@@ -453,6 +502,8 @@ void MainWindow::enableNavigations()
     ui->actionGoNext->setEnabled(true);
     ui->actionGoPrev->setEnabled(true);
     ui->actionGoLast->setEnabled(true);
+    ui->actionZoomIn->setEnabled(true);
+    ui->actionZoomOut->setEnabled(true);
 }
 
 void MainWindow::disableNavigations()
@@ -463,14 +514,16 @@ void MainWindow::disableNavigations()
     ui->actionGoNext->setEnabled(false);
     ui->actionGoPrev->setEnabled(false);
     ui->actionGoLast->setEnabled(false);
+    ui->actionZoomIn->setEnabled(false);
+    ui->actionZoomOut->setEnabled(false);
 }
 
 void MainWindow::showPage(const int pageNum)
 {
     disableVerticalScrollBarSignal();
 
-    Document * document = getCurrentDocument();
-    assert(pageNum < document->getPageNumber());
+    Document & document = Documents::getCurrent();
+    assert(pageNum < document.getPageNumber());
 
     QGraphicsView * view = ui->graphicsView;
     QGraphicsScene * scene = view->scene();
@@ -490,188 +543,7 @@ void MainWindow::showPage(const int pageNum)
     int centerPos = yItemScene + yOffsetScene / 2;
     view->centerOn(0, centerPos);
 
-    document->setCurrentPage(pageNum);
-
     enableVerticalScrollBarSignal();
-}
-
-void MainWindow::goFirstPage()
-{
-    QSignalBlocker bl(spinBoxPageNum);
-    showPage(0);
-    spinBoxPageNum->setValue(1);
-}
-
-void MainWindow::goPrevPage()
-{
-    QSignalBlocker bl(spinBoxPageNum);
-
-    const int currPage = currentPage();
-    if(currPage == 0)
-        return;
-
-    showPage(currPage - 1);
-    spinBoxPageNum->setValue(currPage);
-}
-
-void MainWindow::goNextPage()
-{
-    QSignalBlocker bl(spinBoxPageNum);
-
-    const int currPage = currentPage();
-
-    if(currPage == documentPageNumber() - 1)
-        return;
-
-    showPage(currPage + 1);
-    spinBoxPageNum->setValue(currPage + 2);
-}
-
-void MainWindow::goLastPage()
-{
-    QSignalBlocker bl(spinBoxPageNum);
-    const int currPage = documentPageNumber();
-
-    showPage(currPage - 1);
-    spinBoxPageNum->setValue(currPage);
-}
-
-int MainWindow::currentPage() const
-{
-    Document * document = getCurrentDocument();
-    return document->getCurrentPage();
-}
-
-int MainWindow::documentPageNumber() const
-{
-    Document * document = getCurrentDocument();
-    return document->getPageNumber();
-}
-
-void MainWindow::addTab(const QString fileName)
-{
-    // If tab bar don't contain tab, create it. Set base file name in tab, and full name
-    // in tooltip.
-    QTabBar * tabBar = ui->tabBarDocuments;
-    QSignalBlocker blocker(tabBar);
-
-    int index = tabBar->addTab("");
-
-    tabBar->setTabText(index, getFileBaseName(fileName));
-    tabBar->setTabToolTip(index, fileName);
-    tabBar->setCurrentIndex(index);
-}
-
-Document * MainWindow::getCurrentDocument() const
-{
-    return openDocuments[currentDocumentIndex];
-}
-
-void MainWindow::openDocument(const QString fileName)
-{
-    Document * document = Document::createDocument(fileName);
-    openDocuments.push_back(document);
-
-    QGraphicsScene * scene = document->getScene();
-    QGraphicsView * view = ui->graphicsView;
-    QTreeView * treeViewContent = ui->treeViewContent;
-
-    QAbstractItemModel * contentModel = document->getContentItemModel();
-
-    view->setScene(scene);
-
-    if(contentModel)
-    {
-        treeViewContent->setModel(contentModel);
-        // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
-        treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-        treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    }
-    else
-        treeViewContent->setModel(nullptr);
-
-    // Add new tab in Tab bar
-    addTab(fileName);
-
-    showPage(document->getCurrentPage());
-    enableNavigations();
-
-    lastOpenFileDir = getFileDir(fileName);
-
-    // Update zoom
-    QSignalBlocker bl(spinBoxZoom);
-    qreal scale = document->getScale();
-    int zoom = scale * 100;
-
-    spinBoxZoom->setValue(zoom);
-}
-
-void MainWindow::saveSettings()
-{
-    //TODO: move to Settings
-    QSettings settings;
-
-    // Save list of open files
-    QList<QString> fileNameList;
-    Document * doc;
-    foreach(doc, openDocuments)
-    {
-        QString fileName = doc->getFileName();
-        fileNameList.push_back(fileName);
-    }
-
-    Settings::SetDocumentsList(fileNameList);
-    Settings::SetOpenDocumentNumber(currentDocumentIndex);
-
-    // Save window state
-    settings.setValue("geometry", saveGeometry());
-    settings.setValue("windowState", saveState());
-
-    // Save settings for each open document
-    foreach(doc, openDocuments)
-    {
-        doc->saveSettings();
-    }
-
-    // Save recent documents list
-    QStringList recentDocumentsList = getRecentDocuments();
-    Settings::SetRecentDocuments(recentDocumentsList);
-}
-
-void MainWindow::restoreSettings()
-{
-    //TODO: move to Settings
-    QSettings settings;
-
-    // Restore window state
-    restoreGeometry(settings.value("geometry").toByteArray());
-    restoreState(settings.value("windowState").toByteArray());
-
-    // Open files was opened in previouse session
-    QStringList fileNameList = Settings::GetDocumentList();
-    QString fileName;
-    foreach(fileName, fileNameList)
-    {
-        try {
-            openDocument(fileName);
-        } catch(runtime_error & e) {
-            qWarning() << "Error when open document " << fileName;
-        }
-    }
-
-    optional<int> documentNum = Settings::GetOpenDocumentNumber();
-    if(documentNum.has_value())
-    {
-        const int index = documentNum.value();
-        if(index < openDocuments.size() && index >= 0)
-            switchToDocument(index);
-    }
-
-    QStringList recentDocuments = Settings::GetRecentDocuments();
-    foreach(fileName, recentDocuments)
-    {
-        addRecentDocument(fileName);
-    }
 }
 
 void MainWindow::enableVerticalScrollBarSignal()
@@ -692,93 +564,40 @@ void MainWindow::disableVerticalScrollBarSignal()
         &MainWindow::verticalScroll_valueChanged);
 }
 
-void MainWindow::switchToDocument(const int index)
+void MainWindow::setRecentDocuments(const QList<QString> list)
 {
-    QSignalBlocker bl0(ui->tabBarDocuments);
-    QSignalBlocker bl1(spinBoxPageNum);
-    QSignalBlocker bl2(spinBoxZoom);
-    disableVerticalScrollBarSignal();
+    QMenu * menuFile = ui->menuFile;
 
-    assert(index < openDocuments.size());
-    currentDocumentIndex = index;
-    Document * currentDocument = openDocuments[index];
-
-    QGraphicsScene * scene = currentDocument->getScene();
-    ContentsItemModel * contentModel = currentDocument->getContentItemModel();
-    int currentPage = currentDocument->getCurrentPage();
-
-    ui->graphicsView->setScene(scene);
-    ui->treeViewContent->setModel(contentModel);
-
-    // Resize column. First column("Name") take all aviable size, second(page number) minimum size.
-    if(contentModel != nullptr)
+    // Clear recent document list
+    for(QAction * action : recentDocumentsAction)
     {
-        ui->treeViewContent->header()->setSectionResizeMode(0, QHeaderView::Stretch);
-        ui->treeViewContent->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+        menuFile->removeAction(action);
+        delete action;
     }
+    recentDocumentsAction.clear();
 
-    // Set zoom
-    qreal scale = currentDocument->getScale();
-    spinBoxZoom->setValue(scale * 100);
-
-    showPage(currentPage);
-    ui->tabBarDocuments->setCurrentIndex(index);
-
-    enableVerticalScrollBarSignal();
-}
-
-void MainWindow::addRecentDocument(const QString fileName)
-{
-    //
-    // Add new action in menu File. Text of action - base filename.
-    // user data of action - file path
-    // If recent file list contain more than maximum number of item, remove old item.
-    //
-    const QString text = getFileBaseName(fileName);
-    const QVariant path = fileName;
-
-    // If file with fileName already exist in recent files list, do anything
-    if(recentDocumentsAction.exist(fileName))
-        return;
-
-    QMenu * menu = ui->menuFile;
-
-    QAction * action = new QAction(text);
-    action->setData(path);
-
-    if(recentDocumentsAction.size() == RecentDocumentsListMaxSize)
+    if(!list.empty())
     {
-        QAction * lastAction = recentDocumentsAction.last();
-        menu->removeAction(lastAction);
-        recentDocumentsAction.removeLast();
-
-        delete lastAction;
+        recentFileSeparator = menuFile->addSeparator();
+        // Add actions at the end of File menu
+        for (QString docname : list)
+        {
+            QAction * action = menuFile->addAction(docname);
+            action->setData(docname);
+            connect(action, &QAction::triggered, this, &MainWindow::recentDocumentAction_triggered);
+            recentDocumentsAction.append(action);
+        }
     }
-
-    recentDocumentsAction.push_back(action);
-
-    menu->insertAction(recentFileSeparator, action);
-
-    connect(action, &QAction::triggered, this, &MainWindow::recentDocumentAction_triggered);
-}
-
-QList<QString> MainWindow::getRecentDocuments() const
-{
-    QList<QString> list;
-    QString filePath;
-
-    QAction * action;
-    foreach(action, recentDocumentsAction)
+    else
     {
-        QString path = action->data().toString();
-        list.push_back(path);
+        if(recentFileSeparator)
+            menuFile->removeAction(recentFileSeparator);
+        delete recentFileSeparator;
+        recentFileSeparator = nullptr;
     }
-
-    return list;
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)
 {
-    saveSettings();
     QMainWindow::closeEvent(event);
 }

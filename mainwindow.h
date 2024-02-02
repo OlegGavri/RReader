@@ -20,10 +20,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    // Create application window, open documents from command line and from
-    // previouse session. Read and apply settings.
-    // openDocumenst - list of documents(system path to it) for open
-    MainWindow(const QStringList openDocuemnts, QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
@@ -33,58 +30,20 @@ private:
     QSpinBox * spinBoxZoom;
     QScrollBar * verticalScrollBar;
 
-    // This vector contatain open documents.
-    // Order of documents is the same as the order of tabs in MainWindow
-    QVector<Document*> openDocuments;
-
-    // Index in openDocuments of current open document
-    int currentDocumentIndex = 0;
-
-    // Last open file dir
-    QString lastOpenFileDir = QString();
-
     // List of actions in menu File-><Recent documents>.
     // This action text is document name, and user data is file path
     RecentFilesList recentDocumentsAction;
     QAction * recentFileSeparator;
 
-    // Get name of file without path from full path
-    static QString getFileBaseName(const QString fileName);
-    static QString getFileDir(const QString fileName);
-
     // Enable/Disable navigations elements
     void enableNavigations();
     void disableNavigations();
 
-    // Navigate to page
+    // Display pageNum of current document in view
     void showPage(const int pageNum);
 
     void addZoomSpinBox();
     void addPageNumSpinBox();
-
-    // Navigate to
-    void goFirstPage();
-    void goPrevPage();
-    void goNextPage();
-    void goLastPage();
-
-    // Current page in current document
-    int currentPage() const;
-
-    // Number of pages in current document
-    int documentPageNumber() const;
-
-    // Setup tab bar
-    void addTab(const QString fileName);
-
-    // Get current document(selected in tab bar)
-    Document * getCurrentDocument() const;
-
-    // Open new document
-    void openDocument(const QString fileName);
-
-    void saveSettings();
-    void restoreSettings();
 
     // Enable/disable signal transfer from verticalScrollBar to
     // slot in this window. Can't block all signals from verticalScrollBar because it is used
@@ -92,15 +51,8 @@ private:
     void enableVerticalScrollBarSignal();
     void disableVerticalScrollBarSignal();
 
-    // Switch to document in open documents
-    // index - switched document index
-    void switchToDocument(const int index);
-
-    // Add new file in recent document list
-    void addRecentDocument(const QString fileName);
-
-    // Return paths of recent documents list
-    QList<QString> getRecentDocuments() const;
+    // Set list of recent documents in menu File
+    void setRecentDocuments(const QList<QString>);
 
 protected:
     void closeEvent(QCloseEvent *event) override;
@@ -113,7 +65,11 @@ public slots:
     void on_actionGoPrev_triggered(bool checked = false);
     void on_actionGoNext_triggered(bool checked = false);
     void on_actionGoLast_triggered(bool checked = false);
+
+    // Enable/disable contents panel
     void on_actionContent_triggered(bool checked = false);
+
+    // User activete(double click or Enter) on contents element
     void on_treeViewContent_activated(const QModelIndex &index);
     void on_tabBarDocuments_currentChanged(int index);
     void on_actionZoomIn_triggered(bool checked = false);

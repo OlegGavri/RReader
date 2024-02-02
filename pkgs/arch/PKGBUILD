@@ -1,0 +1,23 @@
+# Maintainer: Oleg Gavrilchenko <oleggavrilcenko6@gmail.com>
+pkgname=RReader
+pkgver=0.1.1
+pkgrel=1
+pkgdesc="PDF/DJVU/FB reader"
+arch=('x86_64')
+url="https://github.com/OlegGavri/RReader"
+license=('GPL')
+depends=('qt5-base' 'poppler-qt5' 'djvulibre')
+source=("git+https://github.com/OlegGavri/RReader.git#tag=v$pkgver")
+sha256sums=('SKIP')
+build() {
+  cd "$pkgname"
+  qmake
+  make
+}
+
+package() {
+  cd "$pkgname"
+  make INSTALL_ROOT="$pkgdir" install
+}
+
+

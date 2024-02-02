@@ -96,3 +96,25 @@ void Settings::SetRecentDocuments(QStringList recentDocs)
     QVariant variant = QVariant::fromValue(recentDocs);
     settings.setValue("recentDocuments", variant);
 }
+
+optional<QString> Settings::GetLastOpenDir()
+{
+    QSettings settings;
+    QVariant variant = settings.value("lastOpenDir");
+
+    if(variant.isValid())
+    {
+        return variant.toString();
+    }
+    else
+    {
+        return nullopt;
+    }
+}
+
+void Settings::SetLastOpenDir(QString lastDir)
+{
+    QSettings settings;
+    QVariant variant = QVariant::fromValue(lastDir);
+    settings.setValue("lastOpenDir", variant);
+}

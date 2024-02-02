@@ -15,6 +15,9 @@ public:
     // Graphic scene with pages
     virtual QGraphicsScene * getScene() const = 0;
 
+    // Get short filename, filename without path
+    virtual QString getName() const;
+
     // Full file path of this document file
     virtual QString getFileName() const = 0;
 
@@ -47,6 +50,7 @@ public:
     virtual void saveSettings() = 0;
 
     // Create new Document class for fileName file
+    // Error: std::runtime_error
     static Document * createDocument(const QString fileName);
 
 private:

@@ -10,6 +10,7 @@
 // Settings about documents is saved with keys 'documents/<docname>/<key>
 //
 
+// Setting of one document
 struct DocumentSettings
 {
     // Document scale
@@ -54,6 +55,10 @@ public:
     // Store list of recent documents
     // recentDocs - documents path
     static void SetRecentDocuments(QStringList recentDocs);
+
+    // Dir where last document was opened
+    static std::optional<QString> GetLastOpenDir();
+    static void SetLastOpenDir(QString);
 };
 
 #endif // SETTINGS_H

@@ -1,5 +1,8 @@
+#include <syslog.h>
+
 #include "mainwindow.h"
 #include "settings.h"
+#include "documents.h"
 
 #include <QApplication>
 #include <QCommandLineParser>
@@ -7,6 +10,9 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    //TODO: Use qInfo(), qWarning etc instead of syslog.
+    openlog(QApplication::applicationName().toStdString().c_str(), 0, LOG_USER | LOG_INFO);
+    syslog(LOG_INFO, "Application started");
 
     QCoreApplication::setApplicationName("RReader");
     QCoreApplication::setOrganizationName("reffum");
@@ -21,12 +27,18 @@ int main(int argc, char *argv[])
 
     cmdLineParser.process(app);
 
-
+    //TODO: this parameter must be passed to Documents::open();
     QStringList cmdLineDocuments = cmdLineParser.positionalArguments();
 
     Settings::Init();
+    Documents::Init();
 
-    MainWindow w(cmdLineDocuments);
+    MainWindow w;
     w.show();
-    return app.exec();
+
+    int exitCode = app.exec();
+
+    Documents::Deinit();
+
+    return exitCode;
 }
