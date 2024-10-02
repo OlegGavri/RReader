@@ -210,6 +210,7 @@ void MainWindow::on_actionGoFirst_triggered(bool)
     spinBoxPageNum->setValue(1);
 
     Document & doc = Documents::getCurrent();
+    doc.setCurrentPage(0);
     showPage(doc.getCurrentPage());
 }
 
