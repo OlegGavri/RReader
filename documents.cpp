@@ -36,6 +36,7 @@ void Documents::Init()
     }
 
     recentDocuments = Settings::GetRecentDocuments();
+    recentDocuments.removeDuplicates();
 }
 
 void Documents::Deinit()
