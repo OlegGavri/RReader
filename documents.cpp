@@ -79,7 +79,7 @@ Document & Documents::open(const QString path, int n)
         }
 
         newDocument = Document::createDocument(path);
-        openDocuments.insert(n, newDocument);
+        openDocuments.insert(n + 1, newDocument);
         currentNumber = n + 1;
     }
 
@@ -121,12 +121,19 @@ void Documents::close(int n)
     Document * document = openDocuments.at(n);
     openDocuments.removeAt(n);
 
-    if(n == currentNumber)
+    // If close current doc switch current to next, if close last doc to prev
+    // This logic repeat logic of QTabBar when user close a tab
+    if(n > currentNumber)
     {
-        if(n >= 0)
-        {
-            currentNumber--;
-        }
+        // Not changed
+    }
+    else if(n == currentNumber)
+    {
+        // Not changed
+    }
+    else if(n < currentNumber)
+    {
+        currentNumber--;
     }
 
     delete document;

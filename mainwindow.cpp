@@ -135,6 +135,7 @@ void MainWindow::on_actionOpen_triggered(bool)
             QTreeView * treeViewContent = ui->treeViewContent;
             QTabBar * tabBar = ui->tabBarDocuments;
             tabBar->insertTab(newTabIndex, doc.getName());
+            tabBar->setCurrentIndex(newTabIndex);
 
             QGraphicsScene * scene = doc.getScene();
             QAbstractItemModel * contentModel = doc.getContentItemModel();
@@ -409,7 +410,6 @@ void MainWindow::tabBarDocuments_tabCloseRequested(int index)
     QSignalBlocker blTabBar(ui->tabBarDocuments);
 
     QTabBar * tabBar = ui->tabBarDocuments;
-    Documents::close(index);
 
     //
     // Close document with index. If index is current switch to another document
@@ -426,9 +426,17 @@ void MainWindow::tabBarDocuments_tabCloseRequested(int index)
             view->setScene(nullptr);
             treeViewContent->setModel(nullptr);
             disableNavigations();
+            ui->actionClose->setEnabled(false);
+
+            Documents::close(index);
         }
         else
         {
+            view->setScene(nullptr);
+            treeViewContent->setModel(nullptr);
+
+            Documents::close(index);
+
             Document & doc = Documents::getCurrent();
 
             QGraphicsScene * scene = doc.getScene();
@@ -442,6 +450,10 @@ void MainWindow::tabBarDocuments_tabCloseRequested(int index)
             spinBoxPageNum->setValue(page + 1);
             spinBoxPageNum->setMaximum(doc.getPageNumber());
         }
+    }
+    else
+    {
+        Documents::close(index);
     }
 
     tabBar->removeTab(index);
