@@ -22,7 +22,9 @@ public:
     Documents() = delete;
     Documents(const Documents &) = delete;
 
-    static void Init();
+    // Initialize documents.
+    // docs - Open documents from docs
+    static void Init(QStringList docs);
     static void Deinit();
 
     // Open new document with path, with position after n.

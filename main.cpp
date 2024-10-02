@@ -27,11 +27,10 @@ int main(int argc, char *argv[])
 
     cmdLineParser.process(app);
 
-    //TODO: this parameter must be passed to Documents::open();
     QStringList cmdLineDocuments = cmdLineParser.positionalArguments();
 
     Settings::Init();
-    Documents::Init();
+    Documents::Init(cmdLineDocuments);
 
     MainWindow w;
     w.show();

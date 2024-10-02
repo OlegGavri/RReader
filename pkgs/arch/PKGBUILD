@@ -1,6 +1,6 @@
 # Maintainer: Oleg Gavrilchenko <oleggavrilcenko6@gmail.com>
 pkgname=RReader
-pkgver=0.2.0
+pkgver=0.2.1
 pkgrel=1
 pkgdesc="PDF/DJVU/FB reader"
 arch=('x86_64')

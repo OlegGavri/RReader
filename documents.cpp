@@ -1,6 +1,7 @@
 #include <stdexcept>
 
 #include <QDir>
+#include <QtDebug>
 
 #include "settings.h"
 #include "documents.h"
@@ -23,9 +24,8 @@ static QString lastOpenDir;
 // List of recent documents
 static QStringList recentDocuments;
 
-void Documents::Init()
+void Documents::Init(QStringList docs)
 {
-    //TODO: open last documents
     if(Settings::GetLastOpenDir().has_value())
     {
         lastOpenDir = Settings::GetLastOpenDir().value();
@@ -37,6 +37,15 @@ void Documents::Init()
 
     recentDocuments = Settings::GetRecentDocuments();
     recentDocuments.removeDuplicates();
+
+    for(QString docpath : docs)
+    {
+        try{
+            open(docpath);
+        } catch(exception & e) {
+            qCritical() << "Open file " << docpath << " error: " << e.what();
+        }
+    }
 }
 
 void Documents::Deinit()
