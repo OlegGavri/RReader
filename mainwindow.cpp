@@ -1,7 +1,5 @@
 #include <stdexcept>
 
-#include <syslog.h>
-
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QLabel>
@@ -155,7 +153,7 @@ void MainWindow::on_actionOpen_triggered(bool)
             enableNavigations();
             ui->actionClose->setEnabled(true);
         } catch (runtime_error & e) {
-            syslog(LOG_ERR, "Open file %s error: %s", fileName.toStdString().c_str(), e.what());
+            qCritical() << "Open file " << fileName << " error: " << e.what();
             QMessageBox::critical(this, "Error", e.what());
         }
     }
@@ -499,7 +497,7 @@ void MainWindow::recentDocumentAction_triggered(bool)
         enableNavigations();
         ui->actionClose->setEnabled(true);
     } catch(runtime_error & e) {
-        syslog(LOG_ERR, "Open file %s error: %s", documentPath.toStdString().c_str(), e.what());
+        qCritical() << "Open file " << documentPath << " error: " << e.what();
         QMessageBox::critical(
             this,
             tr("Error"),
