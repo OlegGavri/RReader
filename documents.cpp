@@ -129,7 +129,11 @@ void Documents::close(int n)
     }
     else if(n == currentNumber)
     {
-        // Not changed
+        // Close current and it is last
+        if(n == openDocuments.size())
+        {
+            currentNumber--;
+        }
     }
     else if(n < currentNumber)
     {
