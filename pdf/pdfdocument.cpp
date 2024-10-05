@@ -108,7 +108,6 @@ void PdfDocument::fillSceneWithPages()
     scene->clear();
     const int numPages = document->numPages();
 
-    //TODO: fix pages postion as in DJVU
     int y = 0;
     for(int i = 0; i < numPages; i++)
     {
