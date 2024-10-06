@@ -371,6 +371,8 @@ void MainWindow::spinBoxZoom_editingFinished()
 
     Document & doc = Documents::getCurrent();
     doc.setScale(scale);
+
+    showCurrentPage();
 }
 
 void MainWindow::verticalScroll_valueChanged(int)
@@ -527,6 +529,14 @@ void MainWindow::disableNavigations()
     ui->actionGoLast->setEnabled(false);
     ui->actionZoomIn->setEnabled(false);
     ui->actionZoomOut->setEnabled(false);
+}
+
+void MainWindow::showCurrentPage()
+{
+    Document & doc = Documents::getCurrent();
+    int page = doc.getCurrentPage();
+
+    showPage(page);
 }
 
 void MainWindow::showPage(const int pageNum)

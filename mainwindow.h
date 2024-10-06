@@ -39,6 +39,9 @@ private:
     void enableNavigations();
     void disableNavigations();
 
+    // Display(render) current page of current document in view
+    void showCurrentPage();
+
     // Display pageNum of current document in view
     void showPage(const int pageNum);
 
